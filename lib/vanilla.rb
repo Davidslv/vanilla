@@ -6,11 +6,14 @@ module Vanilla
   require_relative 'vanilla/map/grid'
   require_relative 'vanilla/output/terminal'
 
+  # algorithms
   require_relative 'vanilla/binary_tree'
+  require_relative 'vanilla/aldous_broder'
 
-  def self.play(rows: 10, columns: 10, png: false)
+  def self.play(rows: 10, columns: 10, png: false, algorithm: Vanilla::BinaryTree)
     grid = Vanilla::Map::Grid.new(rows: rows, columns: columns)
-    Vanilla::BinaryTree.on(grid)
+
+    algorithm.on(grid)
     puts Vanilla::Output::Terminal.new(grid)
 
     if png
@@ -19,6 +22,7 @@ module Vanilla
     end
   end
 
+  # uses Dijkstra’s algorithm
   def self.display_distances(rows: 10, columns: 10)
     # TODO:
     # - provide a start point
