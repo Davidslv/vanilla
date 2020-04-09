@@ -44,6 +44,20 @@ module Vanilla
 
         breadcrumbs
       end
+
+      def max
+        max_distance = 0
+        max_cell = @root
+
+        @cells.each do |cell, distance|
+          if distance > max_distance
+            max_cell = cell
+            max_distance = distance
+          end
+        end
+
+        [max_cell, max_distance]
+      end
     end
 
   end
