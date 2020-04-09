@@ -5,7 +5,10 @@ module Vanilla
         neighbors = []
         neighbors << cell.north if cell.north
         neighbors << cell.east if cell.east
-        neighbor = neighbors.sample
+
+
+        index = rand(neighbors.size)
+        neighbor = neighbors[index]
 
         cell.link(cell: neighbor) if neighbor
       end
