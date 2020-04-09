@@ -14,6 +14,7 @@ module Vanilla
         configure_cells
       end
 
+      # initial grid setup with cells
       def prepare_grid
         Array.new(rows) do |row|
           Array.new(columns) do |column|
@@ -22,6 +23,7 @@ module Vanilla
         end
       end
 
+      # each cell is assigned a neighbor
       def configure_cells
         each_cell do |cell|
           row, col = cell.row, cell.column
