@@ -9,6 +9,7 @@ module Vanilla
   # algorithms
   require_relative 'vanilla/binary_tree'
   require_relative 'vanilla/aldous_broder'
+  require_relative 'vanilla/recursive_backtracker'
 
   def self.play(rows: 10, columns: 10, png: false, algorithm: Vanilla::BinaryTree)
     grid = Vanilla::Map::Grid.new(rows: rows, columns: columns)
