@@ -12,11 +12,13 @@ module Vanilla
   require_relative 'vanilla/recursive_backtracker'
   require_relative 'vanilla/recursive_division'
 
-  def self.play(rows: 10, columns: 10, png: false, algorithm: Vanilla::BinaryTree)
+  def self.play(rows: 10, columns: 10, png: false, algorithm: Vanilla::BinaryTree, open_maze: [true, false].sample)
     grid = Vanilla::Map::Grid.new(rows: rows, columns: columns)
 
     algorithm.on(grid)
-    puts Vanilla::Output::Terminal.new(grid)
+    grid.dead_ends
+
+    puts Vanilla::Output::Terminal.new(grid, open_maze: open_maze)
 
     if png
       require_relative 'vanilla/output/png'

@@ -65,6 +65,12 @@ module Vanilla
         end
       end
 
+      def dead_ends
+        each_cell do |cell|
+          cell.dead_end = cell.links.count == 1
+        end
+      end
+
       # iterator to loop over cells on the grid
       # some algorithms want to look at cells a row at a time (Sidewinder)
       # others just want to look at cells (Binary Tree)

@@ -3,6 +3,7 @@ module Vanilla
     class Cell
       attr_reader :row, :column
       attr_accessor :north, :south, :east, :west
+      attr_accessor :dead_end
 
       def initialize(row:, column:)
         @row, @column = row, column
@@ -27,6 +28,10 @@ module Vanilla
 
       def linked?(cell)
         @links.key?(cell)
+      end
+
+      def dead_end?
+        !! dead_end
       end
 
       def neighbors
