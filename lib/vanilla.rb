@@ -1,18 +1,14 @@
 require 'pry'
 
 module Vanilla
-  require_relative 'vanilla/map/distance_between_cells'
-  require_relative 'vanilla/map/cell'
-  require_relative 'vanilla/map/grid'
+  # map
+  require_relative 'vanilla/map'
 
   # output
   require_relative 'vanilla/output/terminal'
 
   # algorithms
-  require_relative 'vanilla/algorithms/binary_tree'
-  require_relative 'vanilla/algorithms/aldous_broder'
-  require_relative 'vanilla/algorithms/recursive_backtracker'
-  require_relative 'vanilla/algorithms/recursive_division'
+  require_relative 'vanilla/algorithms'
 
   def self.play(rows: 10, columns: 10, png: false, display_distances: false, display_longest: false, algorithm: Vanilla::Algorithms::BinaryTree, open_maze: [true, false].sample)
     grid = Vanilla::Map::Grid.new(rows: rows, columns: columns)
