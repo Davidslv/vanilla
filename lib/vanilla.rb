@@ -12,13 +12,15 @@ module Vanilla
   require_relative 'vanilla/recursive_backtracker'
   require_relative 'vanilla/recursive_division'
 
-  def self.play(rows: 10, columns: 10, png: false, display_distances: false, algorithm: Vanilla::BinaryTree, open_maze: [true, false].sample)
+  def self.play(rows: 10, columns: 10, png: false, display_distances: false, display_longest: false, algorithm: Vanilla::BinaryTree, open_maze: [true, false].sample)
     grid = Vanilla::Map::Grid.new(rows: rows, columns: columns)
 
     algorithm.on(grid)
     grid.dead_ends
 
-    self.display_distances(grid: grid) if display_distances
+    start, goal = self.start_and_goal_points(grid: grid) if display_distances || display_longest
+    self.display_distances(grid: grid, start: start, goal: goal) if (display_distances && !display_longest)
+    self.longest_path(grid: grid , start: start) if display_longest
 
     puts Vanilla::Output::Terminal.new(grid, open_maze: open_maze)
 
@@ -28,10 +30,7 @@ module Vanilla
     end
   end
 
-  # uses Dijkstra’s algorithm
-  def self.display_distances(grid:)
-    puts "displaying path distance from start to goal:"
-
+  def self.start_and_goal_points(grid:)
     start_and_goal_points = [
       # top left
       # top right
@@ -48,7 +47,13 @@ module Vanilla
       grid[0, (grid.columns - 1) / 2],
     ]
 
-    start, goal = start_and_goal_points.shuffle.shift(2)
+    start_and_goal_points.shuffle.shift(2)
+  end
+
+  # uses Dijkstra’s algorithm
+  def self.display_distances(grid:, start:, goal:)
+    puts "displaying path distance from start to goal:"
+
     distances = start.distances
 
     puts "start: [#{start.row}, #{start.column}] goal: [#{goal.row}, #{goal.column}]"
@@ -58,12 +63,14 @@ module Vanilla
     grid
   end
 
-  def self.longest_path(rows: 10, columns: 10)
-    grid = Vanilla::Map::Grid.new(rows: rows, columns: columns)
-    Vanilla::BinaryTree.on(grid)
-
-    start = grid[0,0]
-
+  # Uses Dijkstra's distance to calculate the longest path
+  # the path given doesn't mean it's the only longest path,
+  # but one between the longest possible paths
+  #
+  # In the future:
+  # We can use this to decide wether the maze has enough complexity,
+  # and we can tie it to the characters experience / level
+  def self.longest_path(grid:, start:)
     distances = start.distances
     new_start, distance = distances.max
 
@@ -72,6 +79,6 @@ module Vanilla
 
     grid.distances = new_distances.path_to(goal)
 
-    puts Vanilla::Output::Terminal.new(grid)
+    grid
   end
 end
