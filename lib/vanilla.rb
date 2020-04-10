@@ -17,7 +17,8 @@ module Vanilla
 
     algorithm.on(grid)
     grid.dead_ends
-    self.display_distances(grid: grid)
+
+    self.display_distances(grid: grid) if display_distances
 
     puts Vanilla::Output::Terminal.new(grid, open_maze: open_maze)
 
@@ -29,17 +30,29 @@ module Vanilla
 
   # uses Dijkstra’s algorithm
   def self.display_distances(grid:)
-    start = grid[0, 0]
-    goals = [
+    puts "displaying path distance from start to goal:"
+
+    start_and_goal_points = [
+      # top left
+      # top right
+      # bottom left
+      # bottom right
+      grid[0,0],
+      grid[0, grid.columns - 1],
       grid[grid.rows - 1, 0],
-      grid[grid.rows / 2, grid.columns / 2],
+      grid[grid.rows - 1, grid.columns - 1],
+
+      # middle
+      grid[(grid.rows - 1) / 2, (grid.columns - 1) / 2],
+      grid[(grid.rows - 1) / 2, 0],
+      grid[0, (grid.columns - 1) / 2],
     ]
-    number = rand(0..goals.size - 1)
-    goal = goals[number]
-    puts number
+
+    start, goal = start_and_goal_points.shuffle.shift(2)
     distances = start.distances
 
-    puts "path from northwest corner to southwest corner:"
+    puts "start: [#{start.row}, #{start.column}] goal: [#{goal.row}, #{goal.column}]"
+
     grid.distances = distances.path_to(goal)
 
     grid
