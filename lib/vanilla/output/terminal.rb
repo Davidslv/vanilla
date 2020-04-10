@@ -25,7 +25,11 @@ module Vanilla
             row.each do |cell|
               next unless cell
 
-              body = " #{@grid.contents_of(cell)} "
+              body = @grid.contents_of(cell)
+
+              body = " #{body} " if body.size == 1
+              body = " #{body}" if body.size == 2
+
               east_boundary = (cell.linked?(cell.east) ? " " : "|")
               south_boundary = (cell.linked?(cell.south) ? "   " : "---")
               corner = "+"

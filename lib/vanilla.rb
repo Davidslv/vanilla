@@ -12,11 +12,12 @@ module Vanilla
   require_relative 'vanilla/recursive_backtracker'
   require_relative 'vanilla/recursive_division'
 
-  def self.play(rows: 10, columns: 10, png: false, algorithm: Vanilla::BinaryTree, open_maze: [true, false].sample)
+  def self.play(rows: 10, columns: 10, png: false, display_distances: false, algorithm: Vanilla::BinaryTree, open_maze: [true, false].sample)
     grid = Vanilla::Map::Grid.new(rows: rows, columns: columns)
 
     algorithm.on(grid)
     grid.dead_ends
+    self.display_distances(grid: grid)
 
     puts Vanilla::Output::Terminal.new(grid, open_maze: open_maze)
 
@@ -27,14 +28,7 @@ module Vanilla
   end
 
   # uses Dijkstra’s algorithm
-  def self.display_distances(rows: 10, columns: 10)
-    # TODO:
-    # - provide a start point
-    # - provide a goal point
-
-    grid = Vanilla::Map::Grid.new(rows: rows, columns: columns)
-    Vanilla::BinaryTree.on(grid)
-
+  def self.display_distances(grid:)
     start = grid[0, 0]
     goals = [
       grid[grid.rows - 1, 0],
@@ -48,10 +42,7 @@ module Vanilla
     puts "path from northwest corner to southwest corner:"
     grid.distances = distances.path_to(goal)
 
-    puts Vanilla::Output::Terminal.new(grid)
-    Vanilla::Output::Png.new(grid, start: start, goal: goal).to_png if false
-
-    sleep 0.4
+    grid
   end
 
   def self.longest_path(rows: 10, columns: 10)
