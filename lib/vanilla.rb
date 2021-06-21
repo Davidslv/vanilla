@@ -10,7 +10,12 @@ module Vanilla
   # algorithms
   require_relative 'vanilla/algorithms'
 
-  def self.play(rows: 10, columns: 10, png: false, display_distances: false, display_longest: false, algorithm: Vanilla::Algorithms::BinaryTree, open_maze: [true, false].sample)
+  def self.play(rows: 10, columns: 10, png: false, display_distances: false, display_longest: false, algorithm: Vanilla::Algorithms::BinaryTree, open_maze: true, seed: nil)
+    seed = seed || rand(999_999_999_999_999)
+    puts "Seed: #{seed}"
+
+    srand(seed)
+
     grid = Vanilla::Map::Grid.new(rows: rows, columns: columns)
 
     algorithm.on(grid)
