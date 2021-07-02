@@ -1,1 +1,5 @@
 .DS_Store
+doc/**/*.css
+doc/**/*.js
+doc/**/*.html
+.yardoc/*

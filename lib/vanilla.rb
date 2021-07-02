@@ -37,6 +37,15 @@ module Vanilla
     grid
   end
 
+
+  # @param rows [Integer] is the vertical length of the map
+  # @param columns [Integer] is the  horizontal length of the map
+  # @param algorithm [Object] choose the class object of the algorithm you would like to use 
+  # @param png [Boolean] creates a png file from the generated map
+  # @param display_distances [Boolean] displays a distance from two random points on the grid
+  # @param display_longest [Boolean] displays the longest possible distance between two points on the grid, uses Djikra's algorithm
+  # @param open_maze [Boolean] displays a different render output
+  # @param seed [Integer] is the number necessary to regenerate a given grid
   def self.play(rows: 10, columns: 10, algorithm: Vanilla::Algorithms::BinaryTree, png: false, display_distances: false, display_longest: false, open_maze: true, seed: nil)
     grid = create_grid(rows: rows, columns: columns, algorithm: algorithm, seed: seed)
 

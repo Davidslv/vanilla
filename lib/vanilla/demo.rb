@@ -2,6 +2,8 @@ module Vanilla
   module Demo
     $current_position = [9, 3]
 
+    # Simulates user input to showcase the capabilities of the engine
+    # To be use only for demonstrations, this is a predefined environment
     def self.run
       duration = 0.4
 
@@ -36,7 +38,6 @@ module Vanilla
       Vanilla::Draw.movement(grid: grid, coordinates: $current_position, direction: :left) ; sleep(duration)
 
       # Simulate new level
-
       grid = Vanilla.create_grid(rows: 10, columns: 10, seed: 289665986641610);
       Vanilla::Draw.player(grid: grid, row: 9, column: 0)
       Vanilla::Draw.stairs(grid: grid, row: 9, column: 6)
