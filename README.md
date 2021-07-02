@@ -3,8 +3,7 @@
 This is a work in progress rogue game written in Ruby.
 Most likely it will take me forever to write it... oh well!
 
-
-## Demo
+## Demo
 
 If you would like to watch a small demo
 
@@ -25,7 +24,7 @@ pry(main)> Vanilla.play(rows: 10, columns: 10)
 
 ## Algorithms
 
-### Binary Tree
+### Binary Tree
 
 For each cell in the grid, it randomly creates a passage either north or east.
 
@@ -53,3 +52,13 @@ Adds a wall that divides the grid in half, with a passage linking both halves.
 Repeats on each side until no open areas remain.
 
 Tends to be of a boxy or rectangular texture.
+
+
+### Contributing
+
+If you are interested in contributing, please do.
+
+
+### License
+
+Vanilla is under the MIT License.
