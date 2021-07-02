@@ -1,6 +1,12 @@
 require 'pry'
 
 module Vanilla
+  # demo
+  require_relative 'vanilla/demo'
+
+  # draw
+  require_relative 'vanilla/draw'
+
   # map
   require_relative 'vanilla/map'
 
@@ -10,22 +16,35 @@ module Vanilla
   # algorithms
   require_relative 'vanilla/algorithms'
 
-  def self.play(rows: 10, columns: 10, png: false, display_distances: false, display_longest: false, algorithm: Vanilla::Algorithms::BinaryTree, open_maze: true, seed: nil)
-    seed = seed || rand(999_999_999_999_999)
-    puts "Seed: #{seed}"
+  # support
+  require_relative 'vanilla/support/tile_type'
 
-    srand(seed)
+  # movement
+  require_relative 'vanilla/movement'
+
+  $seed = nil
+
+  def self.create_grid(rows:, columns:, algorithm: Vanilla::Algorithms::BinaryTree, seed: nil, open_maze: true)
+    $seed = seed || rand(999_999_999_999_999)
+    puts "Seed: #{$seed}"
+
+    srand($seed)
 
     grid = Vanilla::Map::Grid.new(rows: rows, columns: columns)
-
     algorithm.on(grid)
     grid.dead_ends
 
-    start, goal = self.start_and_goal_points(grid: grid) if display_distances || display_longest
-    self.display_distances(grid: grid, start: start, goal: goal) if (display_distances && !display_longest)
-    self.longest_path(grid: grid , start: start) if display_longest
+    grid
+  end
 
-    puts Vanilla::Output::Terminal.new(grid, open_maze: open_maze)
+  def self.play(rows: 10, columns: 10, algorithm: Vanilla::Algorithms::BinaryTree, png: false, display_distances: false, display_longest: false, open_maze: true, seed: nil)
+    grid = create_grid(rows: rows, columns: columns, algorithm: algorithm, seed: seed)
+
+    start, goal = self.start_and_goal_points(grid: grid)          if display_distances || display_longest
+    self.display_distances(grid: grid, start: start, goal: goal)  if (display_distances && !display_longest)
+    self.longest_path(grid: grid , start: start)                  if display_longest
+
+    Vanilla::Draw.map(grid)
 
     if png
       require_relative 'vanilla/output/png'
@@ -81,6 +100,9 @@ module Vanilla
     goal, distances = new_distances.max
 
     grid.distances = new_distances.path_to(goal)
+
+    puts "displaying longest path from start point to goal:"
+    puts "start: [#{new_start.row}, #{new_start.column}] goal: [#{goal.row}, #{goal.column}]"
 
     grid
   end
