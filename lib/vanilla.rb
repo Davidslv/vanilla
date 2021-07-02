@@ -22,6 +22,9 @@ module Vanilla
   # movement
   require_relative 'vanilla/movement'
 
+  # unit
+  require_relative 'vanilla/unit'
+
   $seed = nil
 
   def self.create_grid(rows:, columns:, algorithm: Vanilla::Algorithms::BinaryTree, seed: nil, open_maze: true)
@@ -40,7 +43,7 @@ module Vanilla
 
   # @param rows [Integer] is the vertical length of the map
   # @param columns [Integer] is the  horizontal length of the map
-  # @param algorithm [Object] choose the class object of the algorithm you would like to use 
+  # @param algorithm [Object] choose the class object of the algorithm you would like to use
   # @param png [Boolean] creates a png file from the generated map
   # @param display_distances [Boolean] displays a distance from two random points on the grid
   # @param display_longest [Boolean] displays the longest possible distance between two points on the grid, uses Djikra's algorithm
