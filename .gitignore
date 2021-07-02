@@ -3,3 +3,4 @@ doc/**/*.css
 doc/**/*.js
 doc/**/*.html
 .yardoc/*
+png-mazes/
