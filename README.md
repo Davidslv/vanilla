@@ -20,7 +20,7 @@ $ bundle install
 
 ## Demo
 
-If you would like to watch a small demo
+If you would like to watch a small demo.
 
 
 ```ruby
@@ -28,6 +28,11 @@ $ pry -r ./play.rb
 pry(main)> Vanilla::Demo.run
 
 ```
+
+
+https://user-images.githubusercontent.com/136777/124296344-c3dff380-db51-11eb-9490-21968571608d.mov
+
+
 
 ## Playground
 
