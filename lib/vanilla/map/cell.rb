@@ -3,7 +3,7 @@ module Vanilla
     class Cell
       attr_reader :row, :column
       attr_accessor :north, :south, :east, :west
-      attr_accessor :dead_end
+      attr_accessor :dead_end, :tile
 
       def initialize(row:, column:)
         @row, @column = row, column
@@ -32,6 +32,10 @@ module Vanilla
 
       def dead_end?
         !! dead_end
+      end
+
+      def player?
+        tile == Support::TileType::PLAYER
       end
 
       def neighbors

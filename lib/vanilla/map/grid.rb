@@ -58,7 +58,11 @@ module Vanilla
       end
 
       def contents_of(cell)
-        if distances && distances[cell]
+        if cell.player?
+          Support::TileType::PLAYER
+        elsif Support::TileType.values.include?(cell.tile)
+          cell.tile
+        elsif distances && distances[cell]
           distances[cell].to_s(36)
         else
           " "
