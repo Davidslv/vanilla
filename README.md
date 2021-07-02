@@ -1,6 +1,7 @@
 # Vanilla Roguelike
 
 This is a work in progress [roguelike game](https://en.wikipedia.org/wiki/Roguelike) written in Ruby, it is inspired by the original 1980's [rogue game](https://en.wikipedia.org/wiki/Rogue_(video_game)).
+
 Most likely it will take me forever to write it... oh well!
 
 ## Install dependencies
