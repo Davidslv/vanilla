@@ -1,12 +1,12 @@
 # Vanilla Roguelike
 
-This is a work in progress rogue game written in Ruby.
+This is a work in progress [roguelike game](https://en.wikipedia.org/wiki/Roguelike) written in Ruby, it is inspired by the original 1980's [rogue game](https://en.wikipedia.org/wiki/Rogue_(video_game)).
 Most likely it will take me forever to write it... oh well!
 
 ## Install dependencies
 
 This project uses ruby 2.7.2 (see .ruby-version).
-I use rbenv to install different ruby versions, you may need to install [homebrew](https://brew.sh)
+I use rbenv to install different ruby versions, you may need to install [homebrew](https://brew.sh).
 
 
 ```bash
@@ -17,6 +17,9 @@ $ gem install bundler
 $ bundle install
 ```
 
+## Examples 
+
+See the [examples folder](https://github.com/Davidslv/vanilla/tree/master/examples) with examples of the different algorithms.
 
 ## Demo
 
