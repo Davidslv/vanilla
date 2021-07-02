@@ -7,7 +7,7 @@ module Vanilla
       duration = 0.4
 
       grid = Vanilla.create_grid(rows: 10, columns: 10, seed: 84625887428918);
-      player = Vanilla::Unit.new(row: 9, column: 3)
+      player = Vanilla::Unit.new(row: 9, column: 3, tile: Vanilla::Support::TileType::PLAYER)
 
       Vanilla::Draw.player(grid: grid, unit: player)
       Vanilla::Draw.stairs(grid: grid, row: 9, column: 0)
