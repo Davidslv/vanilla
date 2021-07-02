@@ -15,8 +15,8 @@ module Vanilla
         img_width = cell_size * @grid.columns
         img_height = cell_size * @grid.rows
 
-        background = ChunkyPNG::Color::BLACK
-        wall = ChunkyPNG::Color::WHITE
+        background = ChunkyPNG::Color::WHITE
+        wall = ChunkyPNG::Color::BLACK
         start_color = ChunkyPNG::Color('green @ 0.7')
         goal_color = ChunkyPNG::Color('red @ 0.6')
 

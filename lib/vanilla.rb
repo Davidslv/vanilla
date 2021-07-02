@@ -61,7 +61,7 @@ module Vanilla
 
     if png
       require_relative 'vanilla/output/png'
-      Vanilla::Output::Png.new(grid, algorithm: algorithm, seed: $seed).to_png
+      Vanilla::Output::Png.new(grid, algorithm: algorithm, seed: $seed, start: start, goal: goal).to_png
     end
   end
 
