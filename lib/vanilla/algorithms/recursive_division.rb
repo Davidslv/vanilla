@@ -1,6 +1,6 @@
 module Vanilla
   module Algorithms
-    class RecursiveDivision
+    class RecursiveDivision < AbstractAlgorithm
       MINIMUM_SIZE = 5
       TOO_SMALL = 1
       HOW_OFTEN = 4

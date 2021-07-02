@@ -1,6 +1,6 @@
 module Vanilla
   module Algorithms
-    class BinaryTree
+    class BinaryTree < AbstractAlgorithm
       def self.on(grid)
         # What the binary tree is doing here is linking each cell that has been created before.
         # This will be necessary to decide on the maze layout later on.

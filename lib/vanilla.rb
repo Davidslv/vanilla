@@ -50,6 +50,7 @@ module Vanilla
   # @param open_maze [Boolean] displays a different render output
   # @param seed [Integer] is the number necessary to regenerate a given grid
   def self.play(rows: 10, columns: 10, algorithm: Vanilla::Algorithms::BinaryTree, png: false, display_distances: false, display_longest: false, open_maze: true, seed: nil)
+    $seed = seed || rand(999_999_999_999_999)
     grid = create_grid(rows: rows, columns: columns, algorithm: algorithm, seed: seed)
 
     start, goal = self.start_and_goal_points(grid: grid)          if display_distances || display_longest
@@ -60,7 +61,7 @@ module Vanilla
 
     if png
       require_relative 'vanilla/output/png'
-      Vanilla::Output::Png.new(grid).to_png
+      Vanilla::Output::Png.new(grid, algorithm: algorithm, seed: $seed).to_png
     end
   end
 

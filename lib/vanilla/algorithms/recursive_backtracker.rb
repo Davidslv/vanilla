@@ -1,6 +1,6 @@
 module Vanilla
   module Algorithms
-    class RecursiveBacktracker
+    class RecursiveBacktracker < AbstractAlgorithm
       def self.on(grid)
         stack = []
         stack.push(grid.random_cell)

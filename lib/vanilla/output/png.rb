@@ -3,10 +3,12 @@ require 'chunky_png'
 module Vanilla
   module Output
     class Png
-      def initialize(grid, start: nil, goal: nil)
+      def initialize(grid, start: nil, goal: nil, algorithm:, seed:)
         @grid = grid
         @start = start
         @goal  = goal
+        @algorithm_name = algorithm.demodulize
+        @seed = seed
       end
 
       def to_png(cell_size: 20)
@@ -38,7 +40,7 @@ module Vanilla
           end
         end
 
-        img.save "png-mazes/maze_#{rand(1..99999999)}.png"
+        img.save "png-mazes/#{@algorithm_name}/maze_#{@seed}.png"
 
         img
       end

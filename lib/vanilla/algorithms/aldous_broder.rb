@@ -1,6 +1,6 @@
 module Vanilla
   module Algorithms
-    class AldousBroder
+    class AldousBroder < AbstractAlgorithm
       def self.on(grid)
         cell = grid.random_cell
         unvisited = grid.size - 1
