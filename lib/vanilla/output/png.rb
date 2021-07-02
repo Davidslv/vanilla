@@ -38,7 +38,7 @@ module Vanilla
           end
         end
 
-        img.save "maze_#{rand(1...250)}.png"
+        img.save "png-mazes/maze_#{rand(1..99999999)}.png"
 
         img
       end
