@@ -18,7 +18,7 @@ $ gem install bundler
 $ bundle install
 ```
 
-## Examples 
+## Examples
 
 See the [examples folder](https://github.com/Davidslv/vanilla/tree/master/examples) with examples of the different algorithms.
 
@@ -37,6 +37,22 @@ pry(main)> Vanilla::Demo.run
 https://user-images.githubusercontent.com/136777/124296344-c3dff380-db51-11eb-9490-21968571608d.mov
 
 
+## Play
+
+```ruby
+$ pry -r ./play.rb
+pry(main)> Vanilla.run
+
+```
+
+### Controls
+
+Use your keyboard keys H J K L, or use the arrow keys.
+
+H - moves left
+J - moves down
+K - moves up
+L - moves right
 
 ## Playground
 
@@ -45,6 +61,7 @@ $ pry -r ./play.rb
 pry(main)> Vanilla.play(rows: 10, columns: 10)
 
 ```
+
 
 ## Algorithms
 
