@@ -1,7 +1,9 @@
 module Vanilla
   module Draw
     def self.map(grid)
-      system("clear")
+      Curses.clear
+      Curses.refresh
+
       puts "Seed: #{$seed}"
 
       puts Vanilla::Output::Terminal.new(grid)

@@ -3,6 +3,7 @@ GEM
   specs:
     chunky_png (1.3.11)
     coderay (1.1.2)
+    curses (1.4.2)
     method_source (1.0.0)
     pry (0.13.0)
       coderay (~> 1.1)
@@ -14,6 +15,7 @@ PLATFORMS
 
 DEPENDENCIES
   chunky_png
+  curses
   pry
   yard
 

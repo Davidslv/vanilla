@@ -1,6 +1,8 @@
 require 'pry'
+require 'curses'
 
 module Vanilla
+
   # demo
   require_relative 'vanilla/demo'
 
@@ -26,6 +28,41 @@ module Vanilla
   require_relative 'vanilla/unit'
 
   $seed = nil
+
+  def self.run
+    Curses.init_screen
+    Curses.cbreak
+    Curses.noecho
+    # enables arrow keys
+    Curses.stdscr.keypad = true
+
+    at_exit { Curses.close_screen }
+
+    grid = Vanilla.create_grid(rows: 10, columns: 10, seed: 84625887428918);
+    player = Vanilla::Unit.new(row: 9, column: 3, tile: Vanilla::Support::TileType::PLAYER)
+
+    Vanilla::Draw.player(grid: grid, unit: player)
+    Vanilla::Draw.stairs(grid: grid, row: 9, column: 0)
+
+
+    while ch = Curses.getch
+      begin
+        case ch
+        when Curses::KEY_UP
+          Vanilla::Draw.movement(grid: grid, unit: player, direction: :up)
+        when Curses::KEY_DOWN
+          Vanilla::Draw.movement(grid: grid, unit: player, direction: :down)
+        when Curses::KEY_RIGHT
+          Vanilla::Draw.movement(grid: grid, unit: player, direction: :right)
+        when Curses::KEY_LEFT
+          Vanilla::Draw.movement(grid: grid, unit: player, direction: :left)
+        when "q"
+          exit
+        end
+      rescue Curses::RequestDeniedError
+      end
+    end
+  end
 
   def self.create_grid(rows:, columns:, algorithm: Vanilla::Algorithms::BinaryTree, seed: nil, open_maze: true)
     $seed = seed || rand(999_999_999_999_999)
