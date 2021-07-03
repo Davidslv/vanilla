@@ -18,6 +18,8 @@ module Vanilla
     def self.move_left(cell, unit)
       return unless cell.linked?(cell.west)
 
+      unit.found_stairs = cell.west.stairs?
+
       cell.tile = Support::TileType::EMPTY
       cell.west.tile = unit.tile
       unit.row, unit.column = cell.west.row, cell.west.column
@@ -25,6 +27,8 @@ module Vanilla
 
     def self.move_right(cell, unit)
       return unless cell.linked?(cell.east)
+
+      unit.found_stairs = cell.east.stairs?
 
       cell.tile = Support::TileType::EMPTY
       cell.east.tile = unit.tile
@@ -34,6 +38,8 @@ module Vanilla
     def self.move_up(cell, unit)
       return unless cell.linked?(cell.north)
 
+      unit.found_stairs = cell.north.stairs?
+
       cell.tile = Support::TileType::EMPTY
       cell.north.tile = unit.tile
       unit.row, unit.column = cell.north.row, cell.north.column
@@ -41,6 +47,8 @@ module Vanilla
 
     def self.move_down(cell, unit)
       return unless cell.linked?(cell.south)
+
+      unit.found_stairs = cell.south.stairs?
 
       cell.tile = Support::TileType::EMPTY
       cell.south.tile = unit.tile

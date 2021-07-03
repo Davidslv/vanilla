@@ -46,14 +46,14 @@ module Vanilla
   # commands
   require_relative 'vanilla/command'
 
+  # new level
+  require_relative 'vanilla/new_level'
+
   $seed = nil
 
   def self.run
-    grid = Vanilla::Map.create(rows: 10, columns: 10, seed: 84625887428918)
-    player = Vanilla::Unit.new(row: 9, column: 3, tile: Vanilla::Support::TileType::PLAYER)
-
-    Vanilla::Draw.player(grid: grid, unit: player)
-    Vanilla::Draw.stairs(grid: grid, row: 9, column: 0)
+    # level = Vanilla::NewLevel.new(seed: 84625887428918)
+    level = Vanilla::NewLevel.new
 
     while key = STDIN.getch
       # Given that arrow keys are compose of more than one character
@@ -63,7 +63,8 @@ module Vanilla
       key        = STDIN.getch if second_key == "["
       key        = KEYBOARD_ARROWS[key.intern] || key
 
-      Vanilla::Command.process(key: key, grid: grid, unit: player)
+      Vanilla::Command.process(key: key, grid: level.grid, unit: level.player)
+      level = Vanilla::NewLevel.random if level.player.found_stairs?
     end
   end
 
@@ -103,10 +104,18 @@ module Vanilla
       grid[grid.rows - 1, grid.columns - 1],
 
       # middle
-      grid[(grid.rows - 1) / 2, (grid.columns - 1) / 2],
-      grid[(grid.rows - 1) / 2, 0],
-      grid[0, (grid.columns - 1) / 2],
+      # grid[(grid.rows - 1) / 2, (grid.columns - 1) / 2],
+      # grid[(grid.rows - 1) / 2, 0],
+      # grid[0, (grid.columns - 1) / 2],
+      #
+      # middle offsets
+      grid[rand(0..grid.rows), (grid.columns - 1) / 2],
+      grid[(grid.rows - 1) / 2, rand(0..grid.columns)],
+
+      grid[rand(0..((grid.rows - 1) / 2)), rand(0..((grid.columns - 1) / 2))]
     ]
+
+    grid[rand(0..((grid.rows - 1) / 2)), rand(0..((grid.columns - 1) / 2))]
 
     start_and_goal_points.shuffle.shift(2)
   end

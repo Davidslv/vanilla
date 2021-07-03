@@ -2,7 +2,9 @@ module Vanilla
   module Draw
     def self.map(grid)
       system("clear")
-      puts "Seed: #{$seed}"
+      string = "Seed: #{$seed} | Rows: #{grid.rows} | Columns: #{grid.columns}"
+      puts string
+      puts(("-" * string.size) + "\n\n") 
 
       puts Vanilla::Output::Terminal.new(grid)
     end

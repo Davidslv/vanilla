@@ -43,6 +43,10 @@ module Vanilla
         tile == Support::TileType::PLAYER
       end
 
+      def stairs?
+        tile == Support::TileType::STAIRS
+      end
+
       def neighbors
         list = []
         list << north if north
