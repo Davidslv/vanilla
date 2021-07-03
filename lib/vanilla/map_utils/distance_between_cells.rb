@@ -1,5 +1,5 @@
 module Vanilla
-  module Map
+  module MapUtils
     # We will use this class to record the distance of each cell from the starting point (@root)
     # so the initialize constructor simply sets up the hash so that the distance of the root from itself is 0.
     class DistanceBetweenCells

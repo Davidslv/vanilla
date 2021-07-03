@@ -1,5 +1,5 @@
 module Vanilla
-  module Map
+  module MapUtils
     class Cell
       attr_reader :row, :column
       attr_accessor :north, :south, :east, :west
@@ -49,7 +49,7 @@ module Vanilla
       end
 
       def distances
-        distances = Vanilla::Map::DistanceBetweenCells.new(self)
+        distances = Vanilla::MapUtils::DistanceBetweenCells.new(self)
         frontier = [ self ]
 
         # We’re going to keep looping until there are no more cells in the frontier set,

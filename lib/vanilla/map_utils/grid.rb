@@ -1,7 +1,7 @@
 require_relative 'cell'
 
 module Vanilla
-  module Map
+  module MapUtils
     class Grid
       attr_reader :rows, :columns
       attr_accessor :distances

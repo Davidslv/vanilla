@@ -25,6 +25,7 @@ module Vanilla
   require_relative 'vanilla/draw'
 
   # map
+  require_relative 'vanilla/map_utils'
   require_relative 'vanilla/map'
 
   # output
@@ -48,7 +49,7 @@ module Vanilla
   $seed = nil
 
   def self.run
-    grid = Vanilla.create_grid(rows: 10, columns: 10, seed: 84625887428918);
+    grid = Vanilla::Map.create(rows: 10, columns: 10, seed: 84625887428918)
     player = Vanilla::Unit.new(row: 9, column: 3, tile: Vanilla::Support::TileType::PLAYER)
 
     Vanilla::Draw.player(grid: grid, unit: player)
@@ -66,20 +67,6 @@ module Vanilla
     end
   end
 
-  def self.create_grid(rows:, columns:, algorithm: Vanilla::Algorithms::BinaryTree, seed: nil, open_maze: true)
-    $seed = seed || rand(999_999_999_999_999)
-    puts "Seed: #{$seed}"
-
-    srand($seed)
-
-    grid = Vanilla::Map::Grid.new(rows: rows, columns: columns)
-    algorithm.on(grid)
-    grid.dead_ends
-
-    grid
-  end
-
-
   # @param rows [Integer] is the vertical length of the map
   # @param columns [Integer] is the  horizontal length of the map
   # @param algorithm [Object] choose the class object of the algorithm you would like to use
@@ -90,7 +77,7 @@ module Vanilla
   # @param seed [Integer] is the number necessary to regenerate a given grid
   def self.play(rows: 10, columns: 10, algorithm: Vanilla::Algorithms::BinaryTree, png: false, display_distances: false, display_longest: false, open_maze: true, seed: nil)
     $seed = seed || rand(999_999_999_999_999)
-    grid = create_grid(rows: rows, columns: columns, algorithm: algorithm, seed: seed)
+    grid = Vanilla::Map.create(rows: rows, columns: columns, algorithm: algorithm, seed: 84625887428918)
 
     start, goal = self.start_and_goal_points(grid: grid)          if display_distances || display_longest
     self.display_distances(grid: grid, start: start, goal: goal)  if (display_distances && !display_longest)
