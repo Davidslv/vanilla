@@ -6,7 +6,7 @@ module Vanilla
     def self.run
       duration = 0.4
 
-      grid = Vanilla.create_grid(rows: 10, columns: 10, seed: 84625887428918);
+      grid   = Vanilla::Map.create(rows: 10, columns: 10, seed: 84625887428918)
       player = Vanilla::Unit.new(row: 9, column: 3, tile: Vanilla::Support::TileType::PLAYER)
 
       Vanilla::Draw.player(grid: grid, unit: player)
@@ -39,7 +39,7 @@ module Vanilla
       Vanilla::Draw.movement(grid: grid, unit: player, direction: :left) ; sleep(duration)
 
       # Simulate new level
-      grid = Vanilla.create_grid(rows: 10, columns: 10, seed: 289665986641610);
+      grid = Vanilla::Map.create(rows: 10, columns: 10, seed: 289665986641610);
       Vanilla::Draw.player(grid: grid, unit: player)
       Vanilla::Draw.stairs(grid: grid, row: 9, column: 6)
     end
