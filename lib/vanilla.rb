@@ -35,15 +35,13 @@ module Vanilla
     Curses.noecho
     # enables arrow keys
     Curses.stdscr.keypad = true
-
     at_exit { Curses.close_screen }
 
-    grid = Vanilla.create_grid(rows: 10, columns: 10, seed: 84625887428918);
-    player = Vanilla::Unit.new(row: 9, column: 3, tile: Vanilla::Support::TileType::PLAYER)
+    grid = Vanilla.create_grid(rows: 1, columns: 2, seed: 84625887428918);
+    player = Vanilla::Unit.new(row: 0, column: 0, tile: Vanilla::Support::TileType::PLAYER)
 
     Vanilla::Draw.player(grid: grid, unit: player)
-    Vanilla::Draw.stairs(grid: grid, row: 9, column: 0)
-
+    # Vanilla::Draw.stairs(grid: grid, row: 9, column: 0)
 
     while ch = Curses.getch
       begin

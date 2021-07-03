@@ -4,9 +4,9 @@ module Vanilla
       Curses.clear
       Curses.refresh
 
-      puts "Seed: #{$seed}"
+      Curses.addstr("Seed: #{$seed}\n")
 
-      puts Vanilla::Output::Terminal.new(grid)
+      Vanilla::Output::Terminal.new(grid).draw
     end
 
     def self.tile(grid:, row:, column:, tile:)

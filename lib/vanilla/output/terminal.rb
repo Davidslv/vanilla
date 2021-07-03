@@ -6,6 +6,54 @@ module Vanilla
         @open_maze = open_maze
       end
 
+# +---+---+
+# |   |   |
+# +---|---+
+# | @ |   |
+# +---+---+
+
+      def draw
+        corner = "+"
+
+        Curses.addstr(corner + ("---+" * @grid.columns) + "\n")
+
+        @grid.each_row do |row|
+          pipe = "|"
+
+          row.each do |cell|
+            next unless cell
+
+            body = @grid.contents_of(cell)
+
+            body = " #{body} " if body.size == 1
+            body = " #{body}" if body.size == 2
+
+            east_boundary = (cell.linked?(cell.east) ? " " : "|")
+            south_boundary = (cell.linked?(cell.south) ? "   " : "---")
+
+            # 1
+            # Curses.addstr("#{pipe}#{body}#{east_boundary}")
+            # 2
+            # Curses.addstr("#{corner}#{south_boundary}#{corner}")
+
+            # 1
+            # Curses.addstr(pipe + body + east_boundary + "\n" + "c" + "sot" + "c")
+
+            Curses.setpos(cell.column, cell.row)
+            Curses.addch(pipe)
+            Curses.addstr(body)
+            Curses.addstr(east_boundary + "\n")
+
+            Curses.addch(corner)
+            Curses.addstr(south_boundary)
+            Curses.addch(corner + "\n")
+          end
+
+          Curses.addch(pipe + "\n")
+          Curses.addch(corner + "\n")
+        end
+      end
+
       def to_s
         if @open_maze
           draw_open_maze
