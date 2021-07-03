@@ -10,6 +10,11 @@ module Vanilla
         @links = {}
       end
 
+      # cell x, y position
+      def position
+        [row, column]
+      end
+
       def link(cell:, bidirectional: true)
         @links[cell] = true
         cell.link(cell: self, bidirectional: false) if bidirectional
