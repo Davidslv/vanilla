@@ -1,6 +1,23 @@
 require 'pry'
 
 module Vanilla
+  # required to use STDIN.getch
+  # in order to avoid pressing enter to submit input to the game
+  require 'io/console'
+
+  # Keyboard arrow keys are compose of 3 characters
+  #
+  # UP    -> \e[A
+  # DOWN  -> \e[B
+  # RIGHT -> \e[C
+  # LEFT  -> \e[D
+  KEYBOARD_ARROWS = {
+    A: :KEY_UP,
+    B: :KEY_DOWN,
+    C: :KEY_RIGHT,
+    D: :KEY_LEFT
+  }.freeze
+
   # demo
   require_relative 'vanilla/demo'
 
@@ -26,6 +43,36 @@ module Vanilla
   require_relative 'vanilla/unit'
 
   $seed = nil
+
+  def self.run
+    grid = Vanilla.create_grid(rows: 10, columns: 10, seed: 84625887428918);
+    player = Vanilla::Unit.new(row: 9, column: 3, tile: Vanilla::Support::TileType::PLAYER)
+
+    Vanilla::Draw.player(grid: grid, unit: player)
+    Vanilla::Draw.stairs(grid: grid, row: 9, column: 0)
+
+    while key = STDIN.getch
+      # Given that arrow keys are compose of more than one character
+      # we are taking advantage of STDIN repeatedly to represent the correct action.
+      # It's not a perfect solution but it does avoid using Ncurses/Curses
+      second_key = STDIN.getch if key == "\e"
+      key        = STDIN.getch if second_key == "["
+      key        = KEYBOARD_ARROWS[key.intern] || key
+
+      case key
+      when "k", :KEY_UP
+        Vanilla::Draw.movement(grid: grid, unit: player, direction: :up)
+      when "j", :KEY_DOWN
+        Vanilla::Draw.movement(grid: grid, unit: player, direction: :down)
+      when "l", :KEY_RIGHT
+        Vanilla::Draw.movement(grid: grid, unit: player, direction: :right)
+      when "h", :KEY_LEFT
+        Vanilla::Draw.movement(grid: grid, unit: player, direction: :left)
+      when "\C-c", "q"
+        exit
+      end
+    end
+  end
 
   def self.create_grid(rows:, columns:, algorithm: Vanilla::Algorithms::BinaryTree, seed: nil, open_maze: true)
     $seed = seed || rand(999_999_999_999_999)
