@@ -42,6 +42,9 @@ module Vanilla
   # unit
   require_relative 'vanilla/unit'
 
+  # commands
+  require_relative 'vanilla/command'
+
   $seed = nil
 
   def self.run
@@ -59,18 +62,7 @@ module Vanilla
       key        = STDIN.getch if second_key == "["
       key        = KEYBOARD_ARROWS[key.intern] || key
 
-      case key
-      when "k", :KEY_UP
-        Vanilla::Draw.movement(grid: grid, unit: player, direction: :up)
-      when "j", :KEY_DOWN
-        Vanilla::Draw.movement(grid: grid, unit: player, direction: :down)
-      when "l", :KEY_RIGHT
-        Vanilla::Draw.movement(grid: grid, unit: player, direction: :right)
-      when "h", :KEY_LEFT
-        Vanilla::Draw.movement(grid: grid, unit: player, direction: :left)
-      when "\C-c", "q"
-        exit
-      end
+      Vanilla::Command.process(key: key, grid: grid, unit: player)
     end
   end
 
