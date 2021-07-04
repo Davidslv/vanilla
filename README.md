@@ -37,7 +37,7 @@ pry(main)> Vanilla::Demo.run
 https://user-images.githubusercontent.com/136777/124296344-c3dff380-db51-11eb-9490-21968571608d.mov
 
 
-## Play
+## Play
 
 ```ruby
 $ pry -r ./play.rb
@@ -45,14 +45,20 @@ pry(main)> Vanilla.run
 
 ```
 
-### Controls
+### The objective
+
+Your objective is to move your character (`@`) through the mazes, find your way to the stairs (`%`) so that you can find the next maze.
+
+
+### Controls
 
 Use your keyboard keys H J K L, or use the arrow keys.
 
-H - moves left
-J - moves down
-K - moves up
-L - moves right
+- H - moves left
+- J - moves down
+- K - moves up
+- L - moves right
+- q - quits the game (may require multiple presses if you have been using the arrows to move the character)
 
 ## Playground
 
