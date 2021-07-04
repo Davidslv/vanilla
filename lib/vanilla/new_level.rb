@@ -23,8 +23,8 @@ module Vanilla
     end
 
     def self.random
-      rows = rand(10..20)
-      columns = rand(10..35)
+      rows = rand(8..20)
+      columns = rand(8..20)
 
       new(rows: rows, columns: columns)
     end
