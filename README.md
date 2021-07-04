@@ -4,6 +4,10 @@ This is a work in progress [roguelike game](https://en.wikipedia.org/wiki/Roguel
 
 Most likely it will take me forever to write it... oh well!
 
+### The objective
+
+Your objective is to move your character (`@`) through the mazes, find your way to the stairs (`%`) so that you can find the next maze.
+
 ## Install dependencies
 
 This project uses ruby 2.7.2 (see .ruby-version).
@@ -44,11 +48,6 @@ $ pry -r ./play.rb
 pry(main)> Vanilla.run
 
 ```
-
-### The objective
-
-Your objective is to move your character (`@`) through the mazes, find your way to the stairs (`%`) so that you can find the next maze.
-
 
 ### Controls
 
