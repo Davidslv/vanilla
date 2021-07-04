@@ -5,3 +5,5 @@ gem 'chunky_png'
 
 # documentation
 gem 'yard'
+
+gem 'rspec'

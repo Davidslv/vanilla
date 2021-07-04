@@ -3,8 +3,8 @@ module Vanilla
 
     # Simulates user input to showcase the capabilities of the engine
     # To be use only for demonstrations, this is a predefined environment
-    def self.run
-      duration = 0.4
+    def self.run(testing: false)
+      duration = testing ? 0.1 : 0.4
 
       grid   = Vanilla::Map.create(rows: 10, columns: 10, seed: 84625887428918)
       player = Vanilla::Unit.new(row: 9, column: 3, tile: Vanilla::Support::TileType::PLAYER)
