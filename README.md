@@ -13,11 +13,18 @@ Your objective is to move your character (`@`) through the mazes, find your way 
 This project uses ruby 2.7.2 (see .ruby-version).
 I use rbenv to install different ruby versions, you may need to install [homebrew](https://brew.sh).
 
+In case you need to install everything you can simply do:
 
 ```bash
-$ brew install rbenv
+$ ./install.sh
+```
 
-$ rbenv install local
+Otherwise you can proceed with the following:
+
+```bash
+$ brew bundle
+
+$ rbenv install
 $ gem install bundler
 $ bundle install
 ```
@@ -93,12 +100,13 @@ It creates a passage when finds an unvisited cell.
 Starts quickly, although it can take a while to finish.
 This is considered unbiased, meaning it should generate mazes completely randomly.
 
+- [Kansas State University written explanation](https://people.cs.ksu.edu//~ashley78/wiki.ashleycoleman.me/index.php/Aldous-Broder_Algorithm.html)
+
+
 ```ruby
 $ pry -r ./play.rb
 Vanilla.play(rows: 10, columns: 15, algorithm: Vanilla::Algorithms::AldousBroder)
 ```
-
-- [Kansas State University written explanation](https://people.cs.ksu.edu//~ashley78/wiki.ashleycoleman.me/index.php/Aldous-Broder_Algorithm.html)
 
 ### Recursive Backtracker
 
