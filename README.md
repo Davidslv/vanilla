@@ -50,6 +50,14 @@ https://user-images.githubusercontent.com/136777/124296344-c3dff380-db51-11eb-94
 
 ## Play
 
+There is an executable `vanilla.rb` file.
+
+```bash
+$ ./bin/vanilla.rb
+```
+
+Or you can use the `play.rb` file with, but that's mostly used as a playground.
+
 ```ruby
 $ pry -r ./play.rb
 pry(main)> Vanilla.run
