@@ -43,14 +43,17 @@ module Vanilla
         end
 
         FileUtils.mkdir_p(path)
-        img.save "#{path}/maze_#{@seed}.png"
-
-        img
+        img.save(file_path)
       end
 
-      def path
-        "png-mazes/#{@algorithm_name}"
-      end
+      private
+        def path
+          "png-mazes/#{@algorithm_name}"
+        end
+
+        def file_path
+          "#{path}/maze_#{@seed}.png"
+        end
     end
   end
 end
