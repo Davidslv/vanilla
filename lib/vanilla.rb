@@ -78,7 +78,7 @@ module Vanilla
   # @param seed [Integer] is the number necessary to regenerate a given grid
   def self.play(rows: 10, columns: 10, algorithm: Vanilla::Algorithms::BinaryTree, png: false, display_distances: false, display_longest: false, open_maze: true, seed: nil)
     $seed = seed || rand(999_999_999_999_999)
-    grid = Vanilla::Map.create(rows: rows, columns: columns, algorithm: algorithm, seed: 84625887428918)
+    grid = Vanilla::Map.create(rows: rows, columns: columns, algorithm: algorithm, seed: seed)
 
     start, goal = self.start_and_goal_points(grid: grid)          if display_distances || display_longest
     self.display_distances(grid: grid, start: start, goal: goal)  if (display_distances && !display_longest)
@@ -94,21 +94,17 @@ module Vanilla
 
   def self.start_and_goal_points(grid:)
     start_and_goal_points = [
-      # top left
-      # top right
-      # bottom left
-      # bottom right
-      grid[0,0],
-      grid[0, grid.columns - 1],
-      grid[grid.rows - 1, 0],
-      grid[grid.rows - 1, grid.columns - 1],
+      grid[0,0],                                # top left
+      grid[0, grid.columns - 1],                # top right
+      grid[grid.rows - 1, 0],                   # bottom left
+      grid[grid.rows - 1, grid.columns - 1],    # bottom right
 
       # middle
       # grid[(grid.rows - 1) / 2, (grid.columns - 1) / 2],
       # grid[(grid.rows - 1) / 2, 0],
       # grid[0, (grid.columns - 1) / 2],
       #
-      # middle offsets
+      # middle with offsets
       grid[rand(0..grid.rows), (grid.columns - 1) / 2],
       grid[(grid.rows - 1) / 2, rand(0..grid.columns)],
 
