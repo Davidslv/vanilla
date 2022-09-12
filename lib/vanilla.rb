@@ -82,7 +82,7 @@ module Vanilla
 
     start, goal = self.start_and_goal_points(grid: grid)          if display_distances || display_longest
     self.display_distances(grid: grid, start: start, goal: goal)  if (display_distances && !display_longest)
-    self.longest_path(grid: grid , start: start)                  if display_longest
+    Vanilla::Algorithms::LongestPath.on(grid, start: start)       if display_longest
 
     Vanilla::Draw.map(grid)
 
@@ -125,28 +125,6 @@ module Vanilla
     puts "start: [#{start.row}, #{start.column}] goal: [#{goal.row}, #{goal.column}]"
 
     grid.distances = distances.path_to(goal)
-
-    grid
-  end
-
-  # Uses Dijkstra's distance to calculate the longest path
-  # the path given doesn't mean it's the only longest path,
-  # but one between the longest possible paths
-  #
-  # In the future:
-  # We can use this to decide wether the maze has enough complexity,
-  # and we can tie it to the characters experience / level
-  def self.longest_path(grid:, start:)
-    distances = start.distances
-    new_start, distance = distances.max
-
-    new_distances = new_start.distances
-    goal, distances = new_distances.max
-
-    grid.distances = new_distances.path_to(goal)
-
-    puts "displaying longest path from start point to goal:"
-    puts "start: [#{new_start.row}, #{new_start.column}] goal: [#{goal.row}, #{goal.column}]"
 
     grid
   end
