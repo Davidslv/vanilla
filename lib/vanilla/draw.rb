@@ -1,12 +1,12 @@
 module Vanilla
   module Draw
-    def self.map(grid)
+    def self.map(grid, open_maze: true)
       system("clear")
       string = "Seed: #{$seed} | Rows: #{grid.rows} | Columns: #{grid.columns}"
       puts string
-      puts(("-" * string.size) + "\n\n") 
+      puts(("-" * string.size) + "\n\n")
 
-      puts Vanilla::Output::Terminal.new(grid)
+      puts Vanilla::Output::Terminal.new(grid, open_maze: open_maze)
     end
 
     def self.tile(grid:, row:, column:, tile:)

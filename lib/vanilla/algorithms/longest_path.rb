@@ -17,9 +17,6 @@ module Vanilla
 
         grid.distances = new_distances.path_to(goal)
 
-        puts "displaying longest path from start point to goal:"
-        puts "start: [#{new_start.row}, #{new_start.column}] goal: [#{goal.row}, #{goal.column}]"
-
         grid
       end
     end
