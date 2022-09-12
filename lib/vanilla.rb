@@ -92,28 +92,17 @@ module Vanilla
     end
   end
 
+  # defines the start position and end position
+  # recalculates end position when it is the same as start position
   def self.start_and_goal_points(grid:)
-    start_and_goal_points = [
-      grid[0,0],                                # top left
-      grid[0, grid.columns - 1],                # top right
-      grid[grid.rows - 1, 0],                   # bottom left
-      grid[grid.rows - 1, grid.columns - 1],    # bottom right
+    start_position = grid[rand(0...grid.rows), rand(0...grid.columns)]
+    end_position = grid[rand(0...grid.rows), rand(0...grid.columns)]
 
-      # middle
-      # grid[(grid.rows - 1) / 2, (grid.columns - 1) / 2],
-      # grid[(grid.rows - 1) / 2, 0],
-      # grid[0, (grid.columns - 1) / 2],
-      #
-      # middle with offsets
-      grid[rand(0..grid.rows), (grid.columns - 1) / 2],
-      grid[(grid.rows - 1) / 2, rand(0..grid.columns)],
+    until start_position != end_position
+      end_position = grid[rand(0...grid.rows), rand(0...grid.columns)]
+    end
 
-      grid[rand(0..((grid.rows - 1) / 2)), rand(0..((grid.columns - 1) / 2))]
-    ]
-
-    grid[rand(0..((grid.rows - 1) / 2)), rand(0..((grid.columns - 1) / 2))]
-
-    start_and_goal_points.shuffle.shift(2)
+    [start_position, end_position]
   end
 
   # uses Dijkstra’s algorithm
