@@ -84,7 +84,7 @@ module Vanilla
     self.display_distances(grid: grid, start: start, goal: goal)  if (display_distances && !display_longest)
     Vanilla::Algorithms::LongestPath.on(grid, start: start)       if display_longest
 
-    Vanilla::Draw.map(grid)
+    Vanilla::Draw.map(grid, open_maze: open_maze)
 
     if png
       require_relative 'vanilla/output/png'
