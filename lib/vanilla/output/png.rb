@@ -4,10 +4,11 @@ module Vanilla
   module Output
     class Png
       CONFIG = [
+        TRANSPARENT = ChunkyPNG::Color::TRANSPARENT,
         BACKGROUND_COLOR = ChunkyPNG::Color::WHITE,
         WALL_COLOR = ChunkyPNG::Color::BLACK,
-        START_COLOR = ChunkyPNG::Color('green @ 0.7'),
-        GOAL_COLOR = ChunkyPNG::Color('red @ 0.6')
+        START_COLOR = ChunkyPNG::Color('black @ 0.2'),
+        GOAL_COLOR = ChunkyPNG::Color('black @ 0.7')
       ].freeze
 
       def initialize(grid, start: nil, goal: nil, algorithm:, seed:)
@@ -18,7 +19,7 @@ module Vanilla
         @seed = seed
       end
 
-      def to_png(cell_size: 20)
+      def to_png(cell_size: 128)
         img_width = cell_size * @grid.columns
         img_height = cell_size * @grid.rows
 
@@ -30,10 +31,14 @@ module Vanilla
           x2 = (cell.column + 1) * cell_size
           y2 = (cell.row + 1) * cell_size
 
-          if cell == @start
-            img.rect(x1, y1, x2, y2, START_COLOR, START_COLOR)
-          elsif cell == @goal
-            img.rect(x1, y1, x2, y2, GOAL_COLOR, GOAL_COLOR)
+          # circle calculations
+          circle_size = cell_size / 3
+          x_center = (x1 + x2) / 2
+          y_center = (y1 + y2) / 2
+
+          if (cell == @start || cell == @goal)
+            color = (cell == @start) ? START_COLOR : GOAL_COLOR
+            img.circle(x_center, y_center, circle_size, color, color)
           else
             img.line(x1, y1, x2, y1, WALL_COLOR) unless cell.north
             img.line(x1, y1, x1, y2, WALL_COLOR) unless cell.west
