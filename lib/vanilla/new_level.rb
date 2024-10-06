@@ -15,7 +15,7 @@ module Vanilla
       stairs_row = stairs_position[0]
       stairs_column = stairs_position[1]
 
-      @player = Vanilla::Unit.new(row: player_row, column: player_column, tile: Vanilla::Support::TileType::PLAYER)
+      @player = Characters::Player.new(row: player_row, column: player_column)
 
       Vanilla::Draw.player(grid: grid, unit: player)
       Vanilla::Draw.stairs(grid: grid, row: stairs_row, column: stairs_column)
