@@ -10,6 +10,8 @@ module Vanilla
     end
 
     def self.tile(grid:, row:, column:, tile:)
+      raise ArgumentError, 'Invalid tile type' unless Support::TileType::VALUES.include?(tile)
+
       cell = grid[row, column]
       cell.tile = tile
 
