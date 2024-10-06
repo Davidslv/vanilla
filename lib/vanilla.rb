@@ -43,6 +43,9 @@ module Vanilla
   # unit
   require_relative 'vanilla/unit'
 
+  # characters
+  require_relative 'vanilla/characters/player'
+
   # commands
   require_relative 'vanilla/command'
 

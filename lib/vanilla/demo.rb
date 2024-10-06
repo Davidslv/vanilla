@@ -7,7 +7,7 @@ module Vanilla
       duration = testing ? 0.1 : 0.4
 
       grid   = Vanilla::Map.create(rows: 10, columns: 10, seed: 84625887428918)
-      player = Vanilla::Unit.new(row: 9, column: 3, tile: Vanilla::Support::TileType::PLAYER)
+      player = Characters::Player.new(row: 9, column: 3)
 
       Vanilla::Draw.player(grid: grid, unit: player)
       Vanilla::Draw.stairs(grid: grid, row: 9, column: 0)
