@@ -7,32 +7,14 @@ module Vanilla
       attr_accessor :distances
 
       def initialize(rows:, columns:)
+        raise ArgumentError, "Rows must be greater than 0" if rows <= 0
+        raise ArgumentError, "Columns must be greater than 0" if columns <= 0
+
         @rows, @columns = rows, columns
 
         @grid = prepare_grid
 
         configure_cells
-      end
-
-      # initial grid setup with cells
-      def prepare_grid
-        Array.new(rows) do |row|
-          Array.new(columns) do |column|
-            Cell.new(row: row, column: column)
-          end
-        end
-      end
-
-      # each cell is assigned a neighbor
-      def configure_cells
-        each_cell do |cell|
-          row, col = cell.row, cell.column
-
-          cell.north = self[row - 1, col]
-          cell.south = self[row + 1, col]
-          cell.west  = self[row, col - 1]
-          cell.east  = self[row, col + 1]
-        end
       end
 
       # custom array accessor
@@ -89,6 +71,29 @@ module Vanilla
           row.each do |cell|
             yield cell if cell
           end
+        end
+      end
+
+      private
+
+      # initial grid setup with cells
+      def prepare_grid
+        Array.new(rows) do |row|
+          Array.new(columns) do |column|
+            Cell.new(row: row, column: column)
+          end
+        end
+      end
+
+      # each cell is assigned a neighbor
+      def configure_cells
+        each_cell do |cell|
+          row, col = cell.row, cell.column
+
+          cell.north = self[row - 1, col]
+          cell.south = self[row + 1, col]
+          cell.west  = self[row, col - 1]
+          cell.east  = self[row, col + 1]
         end
       end
     end
