@@ -43,6 +43,8 @@ module Vanilla
       # @param bidirectional [Boolean] Whether to create a bidirectional link
       # @return [Cell] Returns self for method chaining
       def link(cell:, bidirectional: true)
+        raise ArgumentError, "Cannot link a cell to itself" if cell == self
+
         @links[cell] = true
         cell.link(cell: self, bidirectional: false) if bidirectional
         self
@@ -54,6 +56,8 @@ module Vanilla
       def unlink(cell:, bidirectional: true)
         @links.delete(cell)
         cell.unlink(cell: self, bidirectional: false) if bidirectional
+
+        self
       end
 
       # Get all cells linked to this cell
