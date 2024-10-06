@@ -1,3 +1,10 @@
+# 
+# Represents a single cell in a maze or grid-based map
+# 
+# Each cell has a row and column position, and can be linked to other cells in the map.
+# Cells can also have various properties, such as whether they are a dead end, or contain a player or stairs.
+# The `distances` method calculates the distance from the current cell to all other cells in the map.
+# 
 module Vanilla
   module MapUtils
     class Cell
@@ -5,6 +12,9 @@ module Vanilla
       attr_accessor :north, :south, :east, :west
       attr_accessor :dead_end, :tile
 
+      # Initialize a new cell with its position in the grid
+      # @param row [Integer] The row position of the cell
+      # @param column [Integer] The column position of the cell
       def initialize(row:, column:)
         @row, @column = row, column
         @links = {}
