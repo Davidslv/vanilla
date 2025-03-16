@@ -16,7 +16,7 @@ module Vanilla
       stairs_row = stairs_position[0]
       stairs_column = stairs_position[1]
 
-      @player = player || Characters::Player.new(row: player_row, column: player_column)
+      @player = player || Characters::Player.new(row: player_row, column: player_column, grid: @grid)
       @player.row = player_row
       @player.column = player_column
 
@@ -72,6 +72,7 @@ module Vanilla
           name: "Monster #{monsters.size + 1}",
           row: row,
           column: column,
+          grid: grid,
           health: 20 + (player.level * 5),
           attack: 5 + (player.level * 2),
           defense: 2 + player.level,

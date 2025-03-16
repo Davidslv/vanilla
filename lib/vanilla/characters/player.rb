@@ -7,8 +7,8 @@ module Vanilla
 
       attr_accessor :name, :level, :experience, :inventory, :health, :max_health, :attack, :defense
 
-      def initialize(name: 'player', row:, column:)
-        super(row: row, column: column, tile: Support::TileType::PLAYER)
+      def initialize(name: 'player', row:, column:, grid:)
+        super(row: row, column: column, tile: Support::TileType::PLAYER, grid: grid)
         @name = name
         
         @level = 1
@@ -16,7 +16,7 @@ module Vanilla
         @inventory = []
         
         # Combat attributes
-        @max_health = 10
+        @max_health = 50
         @health = @max_health
         @attack = 8
         @defense = 3

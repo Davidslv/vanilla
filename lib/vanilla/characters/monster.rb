@@ -3,8 +3,8 @@ module Vanilla
     class Monster < Unit
       attr_accessor :name, :health, :max_health, :attack, :defense, :experience_value
 
-      def initialize(name: 'monster', row:, column:, health: 20, attack: 5, defense: 2, experience_value: 10)
-        super(row: row, column: column, tile: Support::TileType::MONSTER)
+      def initialize(name: 'monster', row:, column:, grid:, health: 20, attack: 5, defense: 2, experience_value: 10)
+        super(row: row, column: column, tile: Support::TileType::MONSTER, grid: grid)
         @name = name
         @max_health = health
         @health = health

@@ -20,10 +20,10 @@ module Vanilla
     # The `player?` method checks if this cell contains the player.
     # The `stairs?` method checks if this cell contains stairs.
     # The `monster?` method checks if this cell contains a monster.
+    # The `occupied?` method checks if the cell is occupied.
     class Cell
       attr_reader :row, :column
-      attr_accessor :north, :south, :east, :west
-      attr_accessor :dead_end, :tile
+      attr_accessor :north, :south, :east, :west, :tile, :dead_end
 
       # Initialize a new cell with its position in the grid
       # @param row [Integer] The row position of the cell
@@ -31,6 +31,8 @@ module Vanilla
       def initialize(row:, column:)
         @row, @column = row, column
         @links = {}
+        @tile = Support::TileType::FLOOR
+        @dead_end = false
       end
 
       # Get the position of the cell as an array
@@ -101,7 +103,12 @@ module Vanilla
       # Get all neighboring cells (north, south, east, west)
       # @return [Array<Cell>] An array of neighboring cells
       def neighbors
-        [north, south, east, west].compact
+        list = []
+        list << north if north
+        list << south if south
+        list << east if east
+        list << west if west
+        list
       end
 
       # Calculate distances from this cell to all other cells in the maze
@@ -126,6 +133,12 @@ module Vanilla
         end
 
         distances
+      end
+
+      # Check if the cell is occupied
+      # @return [Boolean] True if the cell is occupied, false otherwise
+      def occupied?
+        tile != Support::TileType::FLOOR
       end
     end
   end
