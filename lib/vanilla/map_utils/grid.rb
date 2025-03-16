@@ -4,13 +4,14 @@ module Vanilla
   module MapUtils
     class Grid
       attr_reader :rows, :columns
-      attr_accessor :distances
+      attr_accessor :distances, :monsters
 
       def initialize(rows:, columns:)
         raise ArgumentError, "Rows must be greater than 0" if rows <= 0
         raise ArgumentError, "Columns must be greater than 0" if columns <= 0
 
         @rows, @columns = rows, columns
+        @monsters = []
 
         @grid = prepare_grid
 
@@ -42,6 +43,8 @@ module Vanilla
       def contents_of(cell)
         if cell.player?
           Support::TileType::PLAYER
+        elsif cell.monster?
+          Support::TileType::MONSTER
         elsif Support::TileType.values.include?(cell.tile)
           cell.tile
         elsif distances && distances[cell]
@@ -80,7 +83,9 @@ module Vanilla
       def prepare_grid
         Array.new(rows) do |row|
           Array.new(columns) do |column|
-            Cell.new(row: row, column: column)
+            cell = Cell.new(row: row, column: column)
+            cell.tile = Support::TileType::FLOOR
+            cell
           end
         end
       end

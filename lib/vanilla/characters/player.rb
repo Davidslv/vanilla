@@ -5,7 +5,7 @@ module Vanilla
     class Player < Unit
       include Vanilla::Characters::Shared::Movement
 
-      attr_accessor :name, :level, :experience, :inventory
+      attr_accessor :name, :level, :experience, :inventory, :health, :max_health, :attack, :defense
 
       def initialize(name: 'player', row:, column:)
         super(row: row, column: column, tile: Support::TileType::PLAYER)
@@ -14,6 +14,12 @@ module Vanilla
         @level = 1
         @experience = 0
         @inventory = []
+        
+        # Combat attributes
+        @max_health = 10
+        @health = @max_health
+        @attack = 8
+        @defense = 3
       end
 
       def gain_experience(amount)
@@ -24,7 +30,25 @@ module Vanilla
       def level_up
         @level += 1
         @experience -= experience_to_next_level
-        # Add level up bonuses here
+        # Level up bonuses
+        @max_health += 5
+        @health = @max_health
+        @attack += 2
+        @defense += 1
+      end
+
+      def alive?
+        @health > 0
+      end
+
+      def take_damage(amount)
+        actual_damage = [amount - @defense, 1].max
+        @health -= actual_damage
+        actual_damage
+      end
+
+      def attack_target(target)
+        target.take_damage(@attack)
       end
 
       def add_to_inventory(item)
@@ -35,11 +59,11 @@ module Vanilla
         @inventory.delete(item)
       end
 
-      private
-
       def experience_to_next_level
         @level * 100 # Simple formula, can be adjusted
       end
+
+      private
     end
   end
 end

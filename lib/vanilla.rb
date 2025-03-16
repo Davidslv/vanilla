@@ -18,7 +18,7 @@ module Vanilla
     D: :KEY_LEFT
   }.freeze
 
-  # demo
+  # demo
   require_relative 'vanilla/demo'
 
   # draw
@@ -28,7 +28,7 @@ module Vanilla
   require_relative 'vanilla/map_utils'
   require_relative 'vanilla/map'
 
-  # output
+  # output
   require_relative 'vanilla/output/terminal'
 
   # algorithms
@@ -40,11 +40,12 @@ module Vanilla
   # movement
   require_relative 'vanilla/movement'
 
-  # unit
+  # unit
   require_relative 'vanilla/unit'
 
   # characters
   require_relative 'vanilla/characters/player'
+  require_relative 'vanilla/characters/monster'
 
   # commands
   require_relative 'vanilla/command'
@@ -66,8 +67,10 @@ module Vanilla
       key        = STDIN.getch if second_key == "["
       key        = KEYBOARD_ARROWS[key.intern] || key
 
-      Vanilla::Command.process(key: key, grid: level.grid, unit: level.player)
-      level = Vanilla::NewLevel.random if level.player.found_stairs?
+      Vanilla::Command.process(key: key, grid: level.grid, unit: level.player, terminal: level.terminal)
+      if level.player.found_stairs?
+        level = Vanilla::NewLevel.random(player: level.player)
+      end
     end
   end
 
@@ -83,9 +86,9 @@ module Vanilla
     $seed = seed || rand(999_999_999_999_999)
     grid = Vanilla::Map.create(rows: rows, columns: columns, algorithm: algorithm, seed: seed)
 
-    start, goal = self.start_and_goal_points(grid: grid)          if display_distances || display_longest
-    self.display_distances(grid: grid, start: start, goal: goal)  if (display_distances && !display_longest)
-    Vanilla::Algorithms::LongestPath.on(grid, start: start)       if display_longest
+    start, goal = self.start_and_goal_points(grid: grid) if display_distances || display_longest
+    self.display_distances(grid: grid, start: start, goal: goal) if (display_distances && !display_longest)
+    Vanilla::Algorithms::LongestPath.on(grid, start: start) if display_longest
 
     Vanilla::Draw.map(grid, open_maze: open_maze)
 
@@ -95,7 +98,7 @@ module Vanilla
     end
   end
 
-  # defines the start position and end position
+  # defines the start position and end position
   # recalculates end position when it is the same as start position
   def self.start_and_goal_points(grid:)
     start_position = grid[rand(0...grid.rows), rand(0...grid.columns)]
@@ -108,7 +111,7 @@ module Vanilla
     [start_position, end_position]
   end
 
-  # uses Dijkstra’s algorithm
+  # uses Dijkstra's algorithm
   def self.display_distances(grid:, start:, goal:)
     puts "displaying path distance from start to goal:"
 

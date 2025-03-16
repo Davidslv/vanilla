@@ -1,17 +1,45 @@
 module Vanilla
   module Output
     class Terminal
-      def initialize(grid, open_maze: true)
+      def initialize(grid, player: nil, open_maze: true)
         @grid = grid
+        @player = player
         @open_maze = open_maze
+        @messages = []
+      end
+
+      def add_message(message)
+        @messages << message
+      end
+
+      def clear_messages
+        @messages = []
       end
 
       def to_s
-        if @open_maze
+        output = if @open_maze
           draw_open_maze
         else
           draw_dead_end_maze
         end
+
+        # Add player stats below the maze
+        if @player
+          output << "\nPlayer Stats:\n"
+          output << "HP: #{@player.health}/#{@player.max_health}"
+          output << " | Level: #{@player.level}"
+          output << " | XP: #{@player.experience}/#{@player.experience_to_next_level}\n"
+        end
+
+        # Add messages below the stats
+        unless @messages.empty?
+          output << "\nMessages:\n"
+          @messages.each do |msg|
+            output << "#{msg}\n"
+          end
+        end
+
+        output
       end
 
       private
@@ -58,7 +86,7 @@ module Vanilla
               body = cell.dead_end? ? '###' : " #{@grid.contents_of(cell)} "
               east_boundary = (cell.linked?(cell.east) ? " " : '#')
               south_boundary = (cell.linked?(cell.south) ? "   " : '###')
-              corner = '#' # this is the cell being repeated on RecursiveDivision in the middle of nowhere
+              corner = '#'
 
               top << body << east_boundary
               bottom << south_boundary << corner

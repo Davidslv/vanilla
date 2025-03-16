@@ -19,6 +19,7 @@ module Vanilla
     # The `dead_end?` method checks if this cell is a dead end.
     # The `player?` method checks if this cell contains the player.
     # The `stairs?` method checks if this cell contains stairs.
+    # The `monster?` method checks if this cell contains a monster.
     class Cell
       attr_reader :row, :column
       attr_accessor :north, :south, :east, :west
@@ -89,6 +90,12 @@ module Vanilla
       # @return [Boolean] True if it contains stairs, false otherwise
       def stairs?
         tile == Support::TileType::STAIRS
+      end
+
+      # Check if this cell contains a monster
+      # @return [Boolean] True if it contains a monster, false otherwise
+      def monster?
+        tile == Support::TileType::MONSTER
       end
 
       # Get all neighboring cells (north, south, east, west)

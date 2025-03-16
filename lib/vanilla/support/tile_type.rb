@@ -9,7 +9,8 @@ module Vanilla
         PLAYER  = '@'.freeze,
         STAIRS  = '%'.freeze,
         PASSAGE = '='.freeze,
-        VERTICAL_WALL = '|'.freeze
+        VERTICAL_WALL = '|'.freeze,
+        MONSTER = 'M'.freeze
       ].freeze
 
       def self.values
