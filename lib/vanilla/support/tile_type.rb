@@ -1,20 +1,22 @@
 module Vanilla
   module Support
-    class TileType
-      VALUES = [
-        EMPTY   = ' '.freeze,
-        WALL    = '#'.freeze,
-        DOOR    = '/'.freeze,
-        FLOOR   = '.'.freeze,
-        PLAYER  = '@'.freeze,
-        STAIRS  = '%'.freeze,
-        PASSAGE = '='.freeze,
-        VERTICAL_WALL = '|'.freeze,
-        MONSTER = 'M'.freeze
-      ].freeze
+    module TileType
+      FLOOR = ' '
+      WALL = '█'
+      PLAYER = '@'
+      MONSTER = 'M'
+      STAIRS = '%'
+      UNKNOWN = '?'
 
-      def self.values
-        VALUES
+      VALUES = [FLOOR, WALL, PLAYER, MONSTER, STAIRS, UNKNOWN].freeze
+
+      def self.valid?(tile)
+        VALUES.include?(tile)
+      end
+
+      def self.tile_to_s(tile)
+        raise ArgumentError, "Invalid tile type: #{tile}" unless valid?(tile)
+        tile
       end
     end
   end

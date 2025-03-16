@@ -1,6 +1,34 @@
+require 'ostruct'
+require 'chunky_png'
 require 'pry'
 
+# support
+require_relative 'vanilla/support/tile_type'
+
+# map utils
+require_relative 'vanilla/map_utils/cell'
+require_relative 'vanilla/map_utils/grid'
+
+# algorithms
+require_relative 'vanilla/algorithms/abstract_algorithm'
+require_relative 'vanilla/algorithms/binary_tree'
+
+# output
+require_relative 'vanilla/output/terminal'
+
+# characters
+require_relative 'vanilla/characters/player'
+require_relative 'vanilla/characters/monster'
+
+# map
+require_relative 'vanilla/map'
+require_relative 'vanilla/draw'
+require_relative 'vanilla/unit'
+require_relative 'vanilla/level'
+
 module Vanilla
+  class Error < StandardError; end
+
   # required to use STDIN.getch
   # in order to avoid pressing enter to submit input to the game
   require 'io/console'
@@ -18,8 +46,6 @@ module Vanilla
     D: :KEY_LEFT
   }.freeze
 
-  # demo
-  require_relative 'vanilla/demo'
 
   # draw
   require_relative 'vanilla/draw'
@@ -34,40 +60,23 @@ module Vanilla
   # algorithms
   require_relative 'vanilla/algorithms'
 
-  # support
-  require_relative 'vanilla/support/tile_type'
-
   # movement
   require_relative 'vanilla/movement'
-
-  # unit
-  require_relative 'vanilla/unit'
-
-  # characters
-  require_relative 'vanilla/characters/player'
-  require_relative 'vanilla/characters/monster'
-  require_relative 'vanilla/characters/shared/movement'
-  require_relative 'vanilla/map_utils/cell'
-  require_relative 'vanilla/map_utils/grid'
 
   # commands
   require_relative 'vanilla/command'
 
-  # new level
-  require_relative 'vanilla/level'
-
   $seed = nil
 
   def self.run
-    # demo
-    level = Vanilla::Level.new
-    # level = Vanilla::Level.new(seed: 84625887428918)
+    level = Vanilla::Level.random
 
     loop do
-      Vanilla::Draw.map(level.grid, terminal: level.terminal)
+      level.terminal.clear
+      level.update
 
       key = STDIN.getch
-      Vanilla::Command.process(key: key, grid: level.grid, unit: level.player, terminal: level.terminal)
+      Vanilla::Command.process(key: key, grid: level.grid, player: level.player, terminal: level.terminal)
 
       if level.player.found_stairs?
         level = Vanilla::Level.random(player: level.player)

@@ -33,21 +33,6 @@ $ bundle install
 
 See the [examples folder](https://github.com/Davidslv/vanilla/tree/master/examples) with examples of the different algorithms.
 
-## Demo
-
-If you would like to watch a small demo.
-
-
-```ruby
-$ pry -r ./play.rb
-pry(main)> Vanilla::Demo.run
-
-```
-
-
-https://user-images.githubusercontent.com/136777/124296344-c3dff380-db51-11eb-9490-21968571608d.mov
-
-
 ## Play
 
 There is an executable `vanilla.rb` file.
@@ -82,7 +67,6 @@ pry(main)> Vanilla.play(rows: 10, columns: 10)
 
 ```
 
-
 ## Algorithms
 
 The following are some of the known procedural [maze generation algorithms](https://en.wikipedia.org/wiki/Maze_generation_algorithm).
@@ -109,7 +93,6 @@ Starts quickly, although it can take a while to finish.
 This is considered unbiased, meaning it should generate mazes completely randomly.
 
 - [Kansas State University written explanation](https://people.cs.ksu.edu//~ashley78/wiki.ashleycoleman.me/index.php/Aldous-Broder_Algorithm.html)
-
 
 ```ruby
 $ pry -r ./play.rb

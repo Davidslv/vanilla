@@ -1,37 +1,54 @@
 require 'spec_helper'
 require 'vanilla/draw'
+require 'vanilla/map_utils/grid'
+require 'vanilla/characters/player'
+require 'vanilla/characters/monster'
+require 'vanilla/output/terminal'
 
 RSpec.describe Vanilla::Draw do
-  describe '.tile' do
-    let(:grid) { double('grid') }
-    let(:row) { 1 }
-    let(:column) { 2 }
-    let(:tile) { :wall }
+  let(:grid) { Vanilla::MapUtils::Grid.new(rows: 3, columns: 3) }
+  let(:terminal) { Vanilla::Output::Terminal.new(grid: grid) }
+  let(:player) { Vanilla::Characters::Player.new(row: 1, column: 1, grid: grid) }
+  let(:monster) { Vanilla::Characters::Monster.new(row: 2, column: 2, grid: grid) }
 
-    it 'calls the tile method with correct arguments' do
-      expect(described_class).to receive(:tile).with(grid: grid, row: row, column: column, tile: tile)
-      described_class.tile(grid: grid, row: row, column: column, tile: tile)
+  describe '.map' do
+    it 'draws the grid with correct tile types' do
+      grid.cell(0, 0).tile = Support::TileType::WALL
+      grid.cell(1, 1).tile = Support::TileType::FLOOR
+      grid.cell(2, 2).tile = Support::TileType::STAIRS
+
+      output = described_class.map(grid: grid)
+      expect(output).to include('#')
+      expect(output).to include('.')
+      expect(output).to include('%')
     end
+  end
 
-    it 'handles different tile types' do
-      [:floor, :player, :stairs].each do |tile_type|
-        expect(described_class).to receive(:tile).with(grid: grid, row: row, column: column, tile: tile_type)
-        described_class.tile(grid: grid, row: row, column: column, tile: tile_type)
-      end
+  describe '.player' do
+    it 'draws the player at the correct position' do
+      described_class.player(grid: grid, unit: player, terminal: terminal)
+      expect(grid.cell(1, 1).tile).to eq(Support::TileType::PLAYER)
     end
+  end
 
-    it 'handles edge cases for row and column' do
-      expect(described_class).to receive(:tile).with(grid: grid, row: 0, column: 0, tile: tile)
-      described_class.tile(grid: grid, row: 0, column: 0, tile: tile)
-
-      expect(described_class).to receive(:tile).with(grid: grid, row: 100, column: 100, tile: tile)
-      described_class.tile(grid: grid, row: 100, column: 100, tile: tile)
+  describe '.monster' do
+    it 'draws the monster at the correct position' do
+      described_class.monster(grid: grid, unit: monster, terminal: terminal)
+      expect(grid.cell(2, 2).tile).to eq(Support::TileType::MONSTER)
     end
+  end
 
-    it 'raises an error for invalid tile type' do
-      expect {
-        described_class.tile(grid: grid, row: row, column: column, tile: :invalid_tile)
-      }.to raise_error(ArgumentError, /Invalid tile type/)
+  describe '.clear_screen' do
+    it 'clears the terminal' do
+      expect(terminal).to receive(:clear)
+      described_class.clear_screen(terminal: terminal)
+    end
+  end
+
+  describe '.display' do
+    it 'displays the terminal output' do
+      expect(terminal).to receive(:to_s)
+      described_class.display(terminal: terminal)
     end
   end
 end

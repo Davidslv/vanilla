@@ -23,15 +23,16 @@ module Vanilla
     # The `occupied?` method checks if the cell is occupied.
     class Cell
       attr_reader :row, :column
-      attr_accessor :north, :south, :east, :west, :tile, :dead_end
+      attr_accessor :north, :south, :east, :west, :tile, :distance, :dead_end
 
       # Initialize a new cell with its position in the grid
       # @param row [Integer] The row position of the cell
       # @param column [Integer] The column position of the cell
       def initialize(row:, column:)
-        @row, @column = row, column
+        @row = row
+        @column = column
         @links = {}
-        @tile = Support::TileType::FLOOR
+        @tile = Vanilla::Support::TileType::FLOOR
         @dead_end = false
       end
 
@@ -79,36 +80,31 @@ module Vanilla
       # Check if this cell is a dead end
       # @return [Boolean] True if it's a dead end, false otherwise
       def dead_end?
-        !!dead_end
+        @dead_end
       end
 
       # Check if this cell contains the player
       # @return [Boolean] True if it contains the player, false otherwise
       def player?
-        tile == Support::TileType::PLAYER
+        tile == Vanilla::Support::TileType::PLAYER
       end
 
       # Check if this cell contains stairs
       # @return [Boolean] True if it contains stairs, false otherwise
       def stairs?
-        tile == Support::TileType::STAIRS
+        tile == Vanilla::Support::TileType::STAIRS
       end
 
       # Check if this cell contains a monster
       # @return [Boolean] True if it contains a monster, false otherwise
       def monster?
-        tile == Support::TileType::MONSTER
+        tile == Vanilla::Support::TileType::MONSTER
       end
 
       # Get all neighboring cells (north, south, east, west)
       # @return [Array<Cell>] An array of neighboring cells
       def neighbors
-        list = []
-        list << north if north
-        list << south if south
-        list << east if east
-        list << west if west
-        list
+        [north, south, east, west].compact
       end
 
       # Calculate distances from this cell to all other cells in the maze
@@ -138,7 +134,11 @@ module Vanilla
       # Check if the cell is occupied
       # @return [Boolean] True if the cell is occupied, false otherwise
       def occupied?
-        tile != Support::TileType::FLOOR
+        tile != Vanilla::Support::TileType::FLOOR
+      end
+
+      def to_s
+        Vanilla::Support::TileType.tile_to_s(tile)
       end
     end
   end

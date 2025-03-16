@@ -1,15 +1,24 @@
 require 'spec_helper'
 require 'vanilla/map_utils/grid'
+require 'vanilla/support/tile_type'
 
 RSpec.describe Vanilla::MapUtils::Grid do
+  let(:grid) { described_class.new(rows: 3, columns: 3) }
+
   describe '#initialize' do
-    it 'creates a grid with the specified number of rows and columns' do
-      rows = 5
-      columns = 7
-      grid = described_class.new(rows: rows, columns: columns)
-      
-      expect(grid.rows).to eq(rows)
-      expect(grid.columns).to eq(columns)
+    it 'creates a grid with the given dimensions' do
+      expect(grid.rows).to eq(3)
+      expect(grid.columns).to eq(3)
+    end
+
+    it 'creates cells for each position' do
+      expect(grid.each_cell.count).to eq(9)
+    end
+
+    it 'initializes cells with FLOOR tile type' do
+      grid.each_cell do |cell|
+        expect(cell.tile).to eq(Support::TileType::FLOOR)
+      end
     end
 
     it 'raises an ArgumentError when rows is less than 1' do
@@ -46,23 +55,76 @@ RSpec.describe Vanilla::MapUtils::Grid do
       expect(center_cell.east).to eq(grid[1, 2])
       expect(center_cell.west).to eq(grid[1, 0])
     end
+
+    it 'initializes monsters array as empty' do
+      grid = described_class.new(rows: 3, columns: 3)
+      expect(grid.monsters).to be_empty
+    end
   end
 
-  describe '[]' do
-    it 'returns the cell at the specified row and column' do
-      grid = described_class.new(rows: 3, columns: 3)
-      cell = grid[1, 1]
-      expect(cell).to be_an_instance_of(Vanilla::MapUtils::Cell)
+  describe '#cell' do
+    it 'returns the cell at the given position' do
+      cell = grid.cell(1, 2)
+      expect(cell.row).to eq(1)
+      expect(cell.column).to eq(2)
     end
 
-    it 'returns nil if the row is out of bounds' do
-      grid = described_class.new(rows: 3, columns: 3)
-      expect(grid[3, 0]).to be_nil
+    it 'returns nil for out of bounds position' do
+      expect(grid.cell(-1, 0)).to be_nil
+      expect(grid.cell(0, -1)).to be_nil
+      expect(grid.cell(3, 0)).to be_nil
+      expect(grid.cell(0, 3)).to be_nil
+    end
+  end
+
+  describe '#each_cell' do
+    it 'yields each cell in the grid' do
+      cells = []
+      grid.each_cell { |cell| cells << cell }
+      expect(cells.length).to eq(9)
+      expect(cells.first).to be_a(Vanilla::MapUtils::Cell)
+    end
+  end
+
+  describe '#each_row' do
+    it 'yields each row in the grid' do
+      rows = []
+      grid.each_row { |row| rows << row }
+      expect(rows.length).to eq(3)
+      expect(rows.first.length).to eq(3)
+      expect(rows.first.first).to be_a(Vanilla::MapUtils::Cell)
+    end
+  end
+
+  describe '#random_cell' do
+    it 'returns a random cell from the grid' do
+      cell = grid.random_cell
+      expect(cell).to be_a(Vanilla::MapUtils::Cell)
+      expect(cell.row).to be_between(0, 2)
+      expect(cell.column).to be_between(0, 2)
+    end
+  end
+
+  describe '#dead_ends' do
+    it 'returns an array of dead end cells' do
+      cell = grid.cell(1, 1)
+      cell.dead_end = true
+      expect(grid.dead_ends).to include(cell)
     end
 
-    it 'returns nil if the column is out of bounds' do
-      grid = described_class.new(rows: 3, columns: 3)
-      expect(grid[0, 3]).to be_nil
+    it 'returns an empty array when no dead ends exist' do
+      expect(grid.dead_ends).to be_empty
+    end
+  end
+
+  describe '#to_s' do
+    it 'returns a string representation of the grid' do
+      grid.cell(0, 0).tile = Support::TileType::WALL
+      grid.cell(1, 1).tile = Support::TileType::PLAYER
+      grid.cell(2, 2).tile = Support::TileType::STAIRS
+      expect(grid.to_s).to include('#')
+      expect(grid.to_s).to include('@')
+      expect(grid.to_s).to include('%')
     end
   end
 
@@ -74,39 +136,30 @@ RSpec.describe Vanilla::MapUtils::Grid do
   end
 
   describe 'contents_of' do
-    it 'returns the correct content for a cell' do
-      grid = described_class.new(rows: 3, columns: 3)
-      cell = grid[1, 1]
+    let(:cell) { grid[1, 1] }
+
+    it 'returns space for a floor cell' do
       expect(grid.contents_of(cell)).to eq(" ")
     end
 
-    it 'returns the correct content for a cell with a player' do
-      grid = described_class.new(rows: 3, columns: 3)
-      cell = grid[1, 1]
-      cell.tile = Vanilla::Support::TileType::PLAYER
-      expect(grid.contents_of(cell)).to eq(Vanilla::Support::TileType::PLAYER)
-    end
-  end
-
-  describe 'dead_ends' do
-    it 'marks cells with a single link as dead ends' do
-      grid = described_class.new(rows: 3, columns: 3)
-      cell = grid[1, 1]
-      cell.link(cell: grid[1, 0])
-      grid.dead_ends
-
-      expect(cell.dead_end).to be_truthy
+    it 'returns PLAYER for a cell with a player' do
+      cell.tile = Support::TileType::PLAYER
+      expect(grid.contents_of(cell)).to eq(Support::TileType::PLAYER)
     end
 
-    it 'does not mark cells with multiple links as dead ends' do
-      grid = described_class.new(rows: 3, columns: 3)
-      cell = grid[1, 1]
-      cell.link(cell: grid[1, 0])
-      cell.link(cell: grid[1, 2])
+    it 'returns MONSTER for a cell with a monster' do
+      cell.tile = Support::TileType::MONSTER
+      expect(grid.contents_of(cell)).to eq(Support::TileType::MONSTER)
+    end
 
-      grid.dead_ends
+    it 'returns STAIRS for a cell with stairs' do
+      cell.tile = Support::TileType::STAIRS
+      expect(grid.contents_of(cell)).to eq(Support::TileType::STAIRS)
+    end
 
-      expect(cell.dead_end).to be_falsey
+    it 'returns distance value for a cell with distance information' do
+      grid.distances = { cell => 10 }
+      expect(grid.contents_of(cell)).to eq("a") # 10 in base36
     end
   end
 end

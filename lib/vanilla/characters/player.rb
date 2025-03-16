@@ -1,10 +1,9 @@
-require_relative 'shared/movement'
+require_relative '../unit'
+require_relative '../support/tile_type'
 
 module Vanilla
   module Characters
     class Player < Unit
-      include Vanilla::Characters::Shared::Movement
-
       attr_accessor :name, :level, :experience, :inventory, :health, :max_health, :attack, :defense
 
       def initialize(name: 'player', row:, column:, grid:)
@@ -18,23 +17,24 @@ module Vanilla
         # Combat attributes
         @max_health = 50
         @health = @max_health
-        @attack = 8
-        @defense = 3
+        @attack = 10
+        @defense = 5
       end
 
       def gain_experience(amount)
         @experience += amount
-        level_up if @experience >= experience_to_next_level
+        while @experience >= experience_to_next_level
+          level_up
+        end
       end
 
       def level_up
         @level += 1
-        @experience -= experience_to_next_level
-        # Level up bonuses
-        @max_health += 5
+        @max_health += 10
         @health = @max_health
         @attack += 2
         @defense += 1
+        @experience -= experience_to_next_level
       end
 
       def alive?
@@ -43,7 +43,7 @@ module Vanilla
 
       def take_damage(amount)
         actual_damage = [amount - @defense, 1].max
-        @health -= actual_damage
+        @health = [@health - actual_damage, 0].max
         actual_damage
       end
 
@@ -60,10 +60,14 @@ module Vanilla
       end
 
       def experience_to_next_level
-        @level * 100 # Simple formula, can be adjusted
+        100 * @level
       end
 
       private
+
+      def level_up_threshold
+        100 * @level
+      end
     end
   end
 end
