@@ -1,58 +1,38 @@
 module Vanilla
   module Movement
-    def self.move(grid:, unit:, direction:)
-      cell = grid[*unit.coordinates]
+    require_relative 'support/tile_type'
 
+    def self.move(grid:, unit:, direction:)
+      current_cell = grid[unit.row, unit.column]
+      target_cell = get_target_cell(current_cell, direction)
+
+      return false unless can_move?(current_cell, target_cell)
+
+      # Perform the move
+      unit.found_stairs = target_cell.stairs?
+      unit.move_to(target_cell.row, target_cell.column)
+      true
+    end
+
+    private
+
+    def self.get_target_cell(cell, direction)
       case direction
       when :left
-        self.move_left(cell, unit)
+        cell.west
       when :right
-        self.move_right(cell, unit)
+        cell.east
       when :up
-        self.move_up(cell, unit)
+        cell.north
       when :down
-        self.move_down(cell, unit)
+        cell.south
       end
     end
 
-    def self.move_left(cell, unit)
-      return unless cell.linked?(cell.west)
-
-      unit.found_stairs = cell.west.stairs?
-
-      cell.tile = Vanilla::Support::TileType::EMPTY
-      cell.west.tile = unit.tile
-      unit.row, unit.column = cell.west.row, cell.west.column
-    end
-
-    def self.move_right(cell, unit)
-      return unless cell.linked?(cell.east)
-
-      unit.found_stairs = cell.east.stairs?
-
-      cell.tile = Vanilla::Support::TileType::EMPTY
-      cell.east.tile = unit.tile
-      unit.row, unit.column = cell.east.row, cell.east.column
-    end
-
-    def self.move_up(cell, unit)
-      return unless cell.linked?(cell.north)
-
-      unit.found_stairs = cell.north.stairs?
-
-      cell.tile = Vanilla::Support::TileType::EMPTY
-      cell.north.tile = unit.tile
-      unit.row, unit.column = cell.north.row, cell.north.column
-    end
-
-    def self.move_down(cell, unit)
-      return unless cell.linked?(cell.south)
-
-      unit.found_stairs = cell.south.stairs?
-
-      cell.tile = Vanilla::Support::TileType::EMPTY
-      cell.south.tile = unit.tile
-      unit.row, unit.column = cell.south.row, cell.south.column
+    def self.can_move?(current_cell, target_cell)
+      return false unless target_cell # No cell in that direction
+      return false unless current_cell.linked?(target_cell) # No passage
+      true
     end
   end
 end

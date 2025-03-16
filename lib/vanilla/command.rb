@@ -16,13 +16,13 @@ module Vanilla
     def process(key)
       case key
       when 'h', 'a'
-        move(-1, 0)
+        handle_movement(:left)
       when 'j', 's'
-        move(0, 1)
+        handle_movement(:down)
       when 'k', 'w'
-        move(0, -1)
+        handle_movement(:up)
       when 'l', 'd'
-        move(1, 0)
+        handle_movement(:right)
       when "\C-c", "q"
         exit
       else
@@ -32,42 +32,29 @@ module Vanilla
 
     private
 
-    def move(dx, dy)
-      new_row = player.row + dy
-      new_col = player.column + dx
-      target_cell = player.grid[new_row, new_col]
-
-      return add_message("You hit a wall!") unless target_cell && target_cell.tile != Vanilla::Support::TileType::WALL
-
-      case target_cell.tile
-      when Vanilla::Support::TileType::FLOOR
-        player.move_to(new_row, new_col)
-        add_message("You move #{direction_name(dx, dy)}")
-      when Vanilla::Support::TileType::MONSTER
-        monster = player.grid.monsters.find { |m| m.row == new_row && m.column == new_col }
-        if monster
-          initiate_combat(monster)
-        else
-          target_cell.tile = Vanilla::Support::TileType::FLOOR
-          player.move_to(new_row, new_col)
-          add_message("The corridor ahead is clear.")
-        end
-      when Vanilla::Support::TileType::STAIRS
-        player.move_to(new_row, new_col)
-        player.found_stairs = true
-        add_message("You found the stairs!")
+    def handle_movement(direction)
+      result = Movement.move(grid: player.grid, unit: player, direction: direction)
+      
+      if result
+        handle_cell_interaction(player.grid[player.row, player.column])
+        add_message("You move #{direction_name(direction)}")
       else
-        add_message("You can't move there!")
+        add_message("You hit a wall!")
       end
     end
 
-    def direction_name(dx, dy)
-      case [dx, dy]
-      when [-1, 0] then "west"
-      when [1, 0] then "east"
-      when [0, -1] then "north"
-      when [0, 1] then "south"
+    def handle_cell_interaction(cell)
+      if cell.monster?
+        monster = player.grid.monsters.find { |m| m.row == cell.row && m.column == cell.column }
+        initiate_combat(monster) if monster
+      elsif cell.stairs?
+        player.found_stairs = true
+        add_message("You found the stairs!")
       end
+    end
+
+    def direction_name(direction)
+      direction.to_s
     end
 
     def initiate_combat(monster)
