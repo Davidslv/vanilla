@@ -46,30 +46,31 @@ module Vanilla
   # characters
   require_relative 'vanilla/characters/player'
   require_relative 'vanilla/characters/monster'
+  require_relative 'vanilla/characters/shared/movement'
+  require_relative 'vanilla/map_utils/cell'
+  require_relative 'vanilla/map_utils/grid'
 
   # commands
   require_relative 'vanilla/command'
 
   # new level
-  require_relative 'vanilla/new_level'
+  require_relative 'vanilla/level'
 
   $seed = nil
 
   def self.run
-    # level = Vanilla::NewLevel.new(seed: 84625887428918)
-    level = Vanilla::NewLevel.new
+    # demo
+    level = Vanilla::Level.new
+    # level = Vanilla::Level.new(seed: 84625887428918)
 
-    while key = STDIN.getch
-      # Given that arrow keys are compose of more than one character
-      # we are taking advantage of STDIN repeatedly to represent the correct action.
-      # It's not a perfect solution but it does avoid using Ncurses/Curses
-      second_key = STDIN.getch if key == "\e"
-      key        = STDIN.getch if second_key == "["
-      key        = KEYBOARD_ARROWS[key.intern] || key
+    loop do
+      Vanilla::Draw.map(level.grid, terminal: level.terminal)
 
+      key = STDIN.getch
       Vanilla::Command.process(key: key, grid: level.grid, unit: level.player, terminal: level.terminal)
+
       if level.player.found_stairs?
-        level = Vanilla::NewLevel.random(player: level.player)
+        level = Vanilla::Level.random(player: level.player)
       end
     end
   end
