@@ -1,7 +1,10 @@
+require_relative 'shared/movement'
 
 module Vanilla
   module Characters
     class Player < Unit
+      include Vanilla::Characters::Shared::Movement
+
       attr_accessor :name, :level, :experience, :inventory
 
       def initialize(name: 'player', row:, column:)
