@@ -16,13 +16,13 @@ module Vanilla
     def process(key)
       case key
       when 'h', 'a'
-        move_direction(:left)
+        move(-1, 0)
       when 'j', 's'
-        move_direction(:down)
+        move(0, 1)
       when 'k', 'w'
-        move_direction(:up)
+        move(0, -1)
       when 'l', 'd'
-        move_direction(:right)
+        move(1, 0)
       when "\C-c", "q"
         exit
       else
@@ -32,47 +32,41 @@ module Vanilla
 
     private
 
-    def move_direction(direction)
-      current_cell = player.grid[player.row, player.column]
-      target_cell = case direction
-                   when :left then current_cell.west
-                   when :right then current_cell.east
-                   when :up then current_cell.north
-                   when :down then current_cell.south
-                   end
+    def move(dx, dy)
+      new_row = player.row + dy
+      new_col = player.column + dx
+      target_cell = player.grid[new_row, new_col]
 
-      return add_message("You hit a wall!") unless target_cell && current_cell.linked?(target_cell)
+      return add_message("You hit a wall!") unless target_cell && target_cell.tile != Vanilla::Support::TileType::WALL
 
       case target_cell.tile
+      when Vanilla::Support::TileType::FLOOR
+        player.move_to(new_row, new_col)
+        add_message("You move #{direction_name(dx, dy)}")
       when Vanilla::Support::TileType::MONSTER
-        monster = player.grid.monsters.find { |m| m.row == target_cell.row && m.column == target_cell.column }
+        monster = player.grid.monsters.find { |m| m.row == new_row && m.column == new_col }
         if monster
           initiate_combat(monster)
         else
           target_cell.tile = Vanilla::Support::TileType::FLOOR
-          player.move_to(target_cell.row, target_cell.column)
+          player.move_to(new_row, new_col)
           add_message("The corridor ahead is clear.")
         end
       when Vanilla::Support::TileType::STAIRS
-        player.move_to(target_cell.row, target_cell.column)
+        player.move_to(new_row, new_col)
         player.found_stairs = true
         add_message("You found the stairs!")
       else
-        if target_cell.tile == Vanilla::Support::TileType::WALL
-          add_message("You hit a wall!")
-        else
-          player.move_to(target_cell.row, target_cell.column)
-          add_message("You move #{direction_name(direction)}")
-        end
+        add_message("You can't move there!")
       end
     end
 
-    def direction_name(direction)
-      case direction
-      when :left then "west"
-      when :right then "east"
-      when :up then "north"
-      when :down then "south"
+    def direction_name(dx, dy)
+      case [dx, dy]
+      when [-1, 0] then "west"
+      when [1, 0] then "east"
+      when [0, -1] then "north"
+      when [0, 1] then "south"
       end
     end
 

@@ -71,18 +71,51 @@ module Vanilla
   $seed = nil
 
   def self.run
-    level = Vanilla::Level.random
+    # Create initial grid with reasonable starting dimensions
+    initial_grid = Map.create(
+      rows: 3,
+      columns: 3,
+      algorithm: Algorithms::BinaryTree,
+      seed: rand(999_999_999_999_999)
+    )
 
+    # Create the player with the initial grid
+    current_player = Characters::Player.new(
+      row: 1,
+      column: 1,
+      grid: initial_grid,
+      name: 'Hero'
+    )
+
+    # Create the first level
+    level = Level.new(grid: initial_grid, player: current_player)
 
     loop do
       level.terminal.clear
       level.update
 
       key = STDIN.getch
-      Vanilla::Command.process(key: key, grid: level.grid, player: level.player, terminal: level.terminal)
+      Command.process(key: key, grid: level.grid, player: current_player, terminal: level.terminal)
 
-      if level.player.found_stairs?
-        level = Vanilla::Level.random(player: level.player)
+      if current_player.found_stairs?
+        # Create a new level with increased size for progression
+        rows = level.grid.rows + rand(2..4)
+        columns = level.grid.columns + rand(2..4)
+        next_grid = Map.create(
+          rows: rows,
+          columns: columns,
+          algorithm: Algorithms::BinaryTree,
+          seed: rand(999_999_999_999_999)
+        )
+        
+        # Clear player from old grid and update to new grid
+        current_player.grid[current_player.row, current_player.column].tile = Vanilla::Support::TileType::FLOOR
+        current_player.instance_variable_set(:@grid, next_grid)
+        current_player.move_to(1, 1)
+        
+        # Create new level
+        level = Level.new(grid: next_grid, player: current_player)
+        current_player.found_stairs = false
       end
     end
   end
