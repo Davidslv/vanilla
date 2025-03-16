@@ -1,0 +1,143 @@
+Game Programming Patterns Refactoring Plan
+========================================
+
+1. Component Pattern
+-------------------
+Current Issue:
+- Units (Player, Monster) have too many responsibilities
+- Movement, Combat, Stats are all tightly coupled
+- Hard to add new behaviors or modify existing ones
+
+Solution:
+- Create separate components:
+  * MovementComponent
+  * CombatComponent
+  * StatsComponent
+  * InventoryComponent
+- Entities (Player, Monster) become containers for components
+- Makes it easier to:
+  * Add new entity types by combining components
+  * Modify behavior by swapping components
+  * Test components in isolation
+
+2. Observer Pattern
+------------------
+Current Issue:
+- Direct coupling between actions and their effects
+- Hard to add new reactions to events
+- Difficult to track game state changes
+
+Solution:
+- Create an event system for:
+  * Movement events (success, failure, collision)
+  * Combat events (attack, damage, death)
+  * Game state events (level change, item pickup)
+- Benefits:
+  * Easy to add new event listeners
+  * Better debugging (can log all events)
+  * Simpler testing
+  * Support for achievements/quests
+
+3. State Pattern
+---------------
+Current Issue:
+- Game states (exploring, combat, inventory) are implicit
+- State transitions are scattered
+- Hard to add new states
+
+Solution:
+- Create explicit game states:
+  * ExploringState
+  * CombatState
+  * InventoryState
+  * GameOverState
+- Benefits:
+  * Clear state transitions
+  * State-specific input handling
+  * Easier to add new states
+  * Better UI context management
+
+4. Command Pattern Enhancement
+----------------------------
+Current Issue:
+- Commands are fire-and-forget
+- No history of actions
+- Can't implement undo/redo
+
+Solution:
+- Enhance Command pattern:
+  * Make commands recordable
+  * Add undo capability
+  * Store command history
+- Benefits:
+  * Replay support
+  * Undo/redo functionality
+  * Better debugging
+  * Could add save/load feature
+
+5. Update Method Pattern
+-----------------------
+Current Issue:
+- No clear game loop
+- Time-based events are difficult
+- Would be hard to add AI or animations
+
+Solution:
+- Implement proper game loop
+- Add update method to entities/components
+- Benefits:
+  * Support for AI behaviors
+  * Time-based events
+  * Animations
+  * Better performance control
+
+Implementation Priority
+=====================
+1. Component Pattern
+   - Most fundamental change
+   - Makes other patterns easier to implement
+   - Start with MovementComponent
+
+2. Observer Pattern
+   - Helps decouple existing code
+   - Makes testing easier
+   - Enables better debugging
+
+3. State Pattern
+   - Clarifies game flow
+   - Makes UI more manageable
+   - Improves user experience
+
+4. Command Pattern Enhancement
+   - Adds useful features
+   - Improves debugging
+   - Enables save/load
+
+5. Update Method Pattern
+   - Foundation for future features
+   - Add when needed for AI/animations
+
+Next Steps
+==========
+1. Create MovementComponent
+   - Move movement logic from Movement module
+   - Add component base class
+   - Update Unit class to use components
+
+2. Add EventManager
+   - Create basic event system
+   - Convert direct calls to events
+   - Add logging for debugging
+
+3. Create GameState base class
+   - Start with ExploringState
+   - Move relevant logic from main loop
+   - Add state transitions
+
+Notes
+=====
+- Keep existing functionality while refactoring
+- Add tests for new components/systems
+- Document pattern usage for future contributors
+- Consider performance implications
+- Maintain roguelike game feel 
