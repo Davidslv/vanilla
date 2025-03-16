@@ -20,7 +20,7 @@ module Vanilla
 
       unit.found_stairs = cell.west.stairs?
 
-      cell.tile = Support::TileType::EMPTY
+      cell.tile = Vanilla::Support::TileType::EMPTY
       cell.west.tile = unit.tile
       unit.row, unit.column = cell.west.row, cell.west.column
     end
@@ -30,7 +30,7 @@ module Vanilla
 
       unit.found_stairs = cell.east.stairs?
 
-      cell.tile = Support::TileType::EMPTY
+      cell.tile = Vanilla::Support::TileType::EMPTY
       cell.east.tile = unit.tile
       unit.row, unit.column = cell.east.row, cell.east.column
     end
@@ -40,7 +40,7 @@ module Vanilla
 
       unit.found_stairs = cell.north.stairs?
 
-      cell.tile = Support::TileType::EMPTY
+      cell.tile = Vanilla::Support::TileType::EMPTY
       cell.north.tile = unit.tile
       unit.row, unit.column = cell.north.row, cell.north.column
     end
@@ -50,7 +50,7 @@ module Vanilla
 
       unit.found_stairs = cell.south.stairs?
 
-      cell.tile = Support::TileType::EMPTY
+      cell.tile = Vanilla::Support::TileType::EMPTY
       cell.south.tile = unit.tile
       unit.row, unit.column = cell.south.row, cell.south.column
     end

@@ -12,8 +12,8 @@ RSpec.describe Vanilla::Support::TileType do
     end
 
     it 'defines tile types with correct values' do
-      expect(described_class::FLOOR).to eq('.')
-      expect(described_class::WALL).to eq('#')
+      expect(described_class::FLOOR).to eq(' ')
+      expect(described_class::WALL).to eq('█')
       expect(described_class::PLAYER).to eq('@')
       expect(described_class::MONSTER).to eq('M')
       expect(described_class::STAIRS).to eq('%')
@@ -38,8 +38,8 @@ RSpec.describe Vanilla::Support::TileType do
 
   describe '.tile_to_s' do
     it 'returns the string representation of a tile type' do
-      expect(described_class.tile_to_s(described_class::FLOOR)).to eq('.')
-      expect(described_class.tile_to_s(described_class::WALL)).to eq('#')
+      expect(described_class.tile_to_s(described_class::FLOOR)).to eq(' ')
+      expect(described_class.tile_to_s(described_class::WALL)).to eq('█')
       expect(described_class.tile_to_s(described_class::PLAYER)).to eq('@')
       expect(described_class.tile_to_s(described_class::MONSTER)).to eq('M')
       expect(described_class.tile_to_s(described_class::STAIRS)).to eq('>')

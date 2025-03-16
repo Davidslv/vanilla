@@ -37,7 +37,7 @@ module Vanilla
       new_col = player.column + dx
       target_cell = player.grid[new_row, new_col]
 
-      return add_message("You hit a wall!") unless target_cell
+      return add_message("You hit a wall!") unless target_cell && target_cell.tile != Vanilla::Support::TileType::WALL
 
       case target_cell.tile
       when Vanilla::Support::TileType::FLOOR

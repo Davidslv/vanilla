@@ -7,7 +7,7 @@ module Vanilla
       attr_reader :name, :experience_value
 
       def initialize(row:, column:, grid:, name: 'Monster', health: 20, attack: 5, defense: 2, experience_value: 10)
-        super(row: row, column: column, tile: Support::TileType::MONSTER, grid: grid)
+        super(row: row, column: column, tile: Vanilla::Support::TileType::MONSTER, grid: grid)
         @name = name
         @max_health = health
         @health = health

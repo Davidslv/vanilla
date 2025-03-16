@@ -7,7 +7,7 @@ module Vanilla
       attr_accessor :name, :level, :experience, :inventory, :health, :max_health, :attack, :defense
 
       def initialize(name: 'player', row:, column:, grid:)
-        super(row: row, column: column, tile: Support::TileType::PLAYER, grid: grid)
+        super(row: row, column: column, tile: Vanilla::Support::TileType::PLAYER, grid: grid)
         @name = name
         
         @level = 1

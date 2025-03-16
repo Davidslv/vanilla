@@ -20,7 +20,7 @@ RSpec.describe Vanilla::MapUtils::Cell do
     end
 
     it 'initializes with default values' do
-      expect(cell.tile).to eq(Support::TileType::FLOOR)
+      expect(cell.tile).to eq(Vanilla::Support::TileType::FLOOR)
       expect(cell.dead_end).to be_falsey
     end
   end
@@ -138,7 +138,7 @@ RSpec.describe Vanilla::MapUtils::Cell do
     end
 
     it 'returns true if the cell contains the player' do
-      player_cell.tile = ::Vanilla::Support::TileType::PLAYER
+      player_cell.tile = Vanilla::Support::TileType::PLAYER
       expect(player_cell.player?).to be_truthy
     end
   end
@@ -151,7 +151,7 @@ RSpec.describe Vanilla::MapUtils::Cell do
     end
 
     it 'returns true if the cell contains stairs' do
-      stairs_cell.tile = ::Vanilla::Support::TileType::STAIRS
+      stairs_cell.tile = Vanilla::Support::TileType::STAIRS
       expect(stairs_cell.stairs?).to be_truthy
     end
   end
@@ -164,7 +164,7 @@ RSpec.describe Vanilla::MapUtils::Cell do
     end
 
     it 'returns true if the cell contains a monster' do
-      monster_cell.tile = ::Vanilla::Support::TileType::MONSTER
+      monster_cell.tile = Vanilla::Support::TileType::MONSTER
       expect(monster_cell.monster?).to be_truthy
     end
   end
@@ -179,17 +179,17 @@ RSpec.describe Vanilla::MapUtils::Cell do
     end
 
     it 'returns true if the cell contains a player' do
-      player_cell.tile = ::Vanilla::Support::TileType::PLAYER
+      player_cell.tile = Vanilla::Support::TileType::PLAYER
       expect(player_cell.occupied?).to be_truthy
     end
 
     it 'returns true if the cell contains a monster' do
-      monster_cell.tile = ::Vanilla::Support::TileType::MONSTER
+      monster_cell.tile = Vanilla::Support::TileType::MONSTER
       expect(monster_cell.occupied?).to be_truthy
     end
 
     it 'returns true if the cell contains stairs' do
-      stairs_cell.tile = ::Vanilla::Support::TileType::STAIRS
+      stairs_cell.tile = Vanilla::Support::TileType::STAIRS
       expect(stairs_cell.occupied?).to be_truthy
     end
   end
@@ -228,17 +228,17 @@ RSpec.describe Vanilla::MapUtils::Cell do
 
   describe '#to_s' do
     it 'returns the tile representation' do
-      cell.tile = Support::TileType::WALL
+      cell.tile = Vanilla::Support::TileType::WALL
       expect(cell.to_s).to eq('#')
     end
 
     it 'handles different tile types' do
       tile_types = {
-        Support::TileType::FLOOR => '.',
-        Support::TileType::WALL => '#',
-        Support::TileType::PLAYER => '@',
-        Support::TileType::MONSTER => 'M',
-        Support::TileType::STAIRS => '%'
+        Vanilla::Support::TileType::FLOOR => '.',
+        Vanilla::Support::TileType::WALL => '#',
+        Vanilla::Support::TileType::PLAYER => '@',
+        Vanilla::Support::TileType::MONSTER => 'M',
+        Vanilla::Support::TileType::STAIRS => '%'
       }
 
       tile_types.each do |tile_type, representation|

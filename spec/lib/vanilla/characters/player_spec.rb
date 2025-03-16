@@ -17,7 +17,7 @@ RSpec.describe Vanilla::Characters::Player do
     end
 
     it 'sets the correct tile type' do
-      expect(player.tile).to eq(Support::TileType::PLAYER)
+      expect(player.tile).to eq(Vanilla::Support::TileType::PLAYER)
     end
   end
 

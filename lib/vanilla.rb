@@ -47,6 +47,8 @@ module Vanilla
   }.freeze
 
 
+  require_relative 'vanilla/support/tile_type'
+
   # draw
   require_relative 'vanilla/draw'
 
@@ -70,6 +72,7 @@ module Vanilla
 
   def self.run
     level = Vanilla::Level.random
+
 
     loop do
       level.terminal.clear
@@ -101,11 +104,6 @@ module Vanilla
     Vanilla::Algorithms::LongestPath.on(grid, start: start) if display_longest
 
     Vanilla::Draw.map(grid, open_maze: open_maze)
-
-    if png
-      require_relative 'vanilla/output/png'
-      Vanilla::Output::Png.new(grid, algorithm: algorithm, seed: $seed, start: start, goal: goal).to_png
-    end
   end
 
   # defines the start position and end position

@@ -15,7 +15,7 @@ RSpec.describe Vanilla::Characters::Monster do
     end
 
     it 'sets the correct tile type' do
-      expect(monster.tile).to eq(Support::TileType::MONSTER)
+      expect(monster.tile).to eq(Vanilla::Support::TileType::MONSTER)
     end
   end
 

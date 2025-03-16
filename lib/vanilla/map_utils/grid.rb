@@ -56,8 +56,9 @@ module Vanilla
       end
 
       def contents_of(cell)
-        return ' ' if cell.tile == Support::TileType::FLOOR
-        return cell.tile if Support::TileType.valid?(cell.tile)
+        return Vanilla::Support::TileType::FLOOR if cell.tile == Vanilla::Support::TileType::FLOOR
+        
+        return cell.tile if Vanilla::Support::TileType.valid?(cell.tile)
         cell.distance ? cell.distance.to_s(36) : cell.tile
       end
 

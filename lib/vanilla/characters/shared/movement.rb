@@ -55,7 +55,7 @@ module Vanilla
           target_cell = current_cell.send(direction)
           
           # Update cell tiles
-          current_cell.tile = Support::TileType::FLOOR
+          current_cell.tile = Vanilla::Support::TileType::FLOOR
           target_cell.tile = self.tile
           
           # Update unit position
@@ -71,7 +71,7 @@ module Vanilla
           end
           
           # Check for stairs
-          self.found_stairs = target_cell.tile == Support::TileType::STAIRS
+          self.found_stairs = target_cell.tile == Vanilla::Support::TileType::STAIRS
         end
       end
     end

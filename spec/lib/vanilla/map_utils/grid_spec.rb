@@ -17,7 +17,7 @@ RSpec.describe Vanilla::MapUtils::Grid do
 
     it 'initializes cells with FLOOR tile type' do
       grid.each_cell do |cell|
-        expect(cell.tile).to eq(Support::TileType::FLOOR)
+        expect(cell.tile).to eq(Vanilla::Support::TileType::FLOOR)
       end
     end
 
@@ -119,9 +119,9 @@ RSpec.describe Vanilla::MapUtils::Grid do
 
   describe '#to_s' do
     it 'returns a string representation of the grid' do
-      grid.cell(0, 0).tile = Support::TileType::WALL
-      grid.cell(1, 1).tile = Support::TileType::PLAYER
-      grid.cell(2, 2).tile = Support::TileType::STAIRS
+      grid.cell(0, 0).tile = Vanilla::Support::TileType::WALL
+      grid.cell(1, 1).tile = Vanilla::Support::TileType::PLAYER
+      grid.cell(2, 2).tile = Vanilla::Support::TileType::STAIRS
       expect(grid.to_s).to include('#')
       expect(grid.to_s).to include('@')
       expect(grid.to_s).to include('%')
@@ -143,18 +143,18 @@ RSpec.describe Vanilla::MapUtils::Grid do
     end
 
     it 'returns PLAYER for a cell with a player' do
-      cell.tile = Support::TileType::PLAYER
-      expect(grid.contents_of(cell)).to eq(Support::TileType::PLAYER)
+      cell.tile = Vanilla::Support::TileType::PLAYER
+      expect(grid.contents_of(cell)).to eq(Vanilla::Support::TileType::PLAYER)
     end
 
     it 'returns MONSTER for a cell with a monster' do
-      cell.tile = Support::TileType::MONSTER
-      expect(grid.contents_of(cell)).to eq(Support::TileType::MONSTER)
+      cell.tile = Vanilla::Support::TileType::MONSTER
+      expect(grid.contents_of(cell)).to eq(Vanilla::Support::TileType::MONSTER)
     end
 
     it 'returns STAIRS for a cell with stairs' do
-      cell.tile = Support::TileType::STAIRS
-      expect(grid.contents_of(cell)).to eq(Support::TileType::STAIRS)
+      cell.tile = Vanilla::Support::TileType::STAIRS
+      expect(grid.contents_of(cell)).to eq(Vanilla::Support::TileType::STAIRS)
     end
 
     it 'returns distance value for a cell with distance information' do

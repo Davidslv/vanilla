@@ -13,9 +13,9 @@ RSpec.describe Vanilla::Draw do
 
   describe '.map' do
     it 'draws the grid with correct tile types' do
-      grid.cell(0, 0).tile = Support::TileType::WALL
-      grid.cell(1, 1).tile = Support::TileType::FLOOR
-      grid.cell(2, 2).tile = Support::TileType::STAIRS
+      grid.cell(0, 0).tile = Vanilla::Support::TileType::WALL
+      grid.cell(1, 1).tile = Vanilla::Support::TileType::FLOOR
+      grid.cell(2, 2).tile = Vanilla::Support::TileType::STAIRS
 
       output = described_class.map(grid: grid)
       expect(output).to include('#')
@@ -27,14 +27,14 @@ RSpec.describe Vanilla::Draw do
   describe '.player' do
     it 'draws the player at the correct position' do
       described_class.player(grid: grid, unit: player, terminal: terminal)
-      expect(grid.cell(1, 1).tile).to eq(Support::TileType::PLAYER)
+      expect(grid.cell(1, 1).tile).to eq(Vanilla::Support::TileType::PLAYER)
     end
   end
 
   describe '.monster' do
     it 'draws the monster at the correct position' do
       described_class.monster(grid: grid, unit: monster, terminal: terminal)
-      expect(grid.cell(2, 2).tile).to eq(Support::TileType::MONSTER)
+      expect(grid.cell(2, 2).tile).to eq(Vanilla::Support::TileType::MONSTER)
     end
   end
 

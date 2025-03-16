@@ -5,18 +5,18 @@ require 'vanilla/support/tile_type'
 
 RSpec.describe Vanilla::Unit do
   let(:grid) { Vanilla::MapUtils::Grid.new(rows: 3, columns: 3) }
-  let(:unit) { described_class.new(row: 1, column: 1, tile: Support::TileType::PLAYER, grid: grid) }
+  let(:unit) { described_class.new(row: 1, column: 1, tile: Vanilla::Support::TileType::PLAYER, grid: grid) }
 
   describe '#initialize' do
     it 'creates a unit with the given position and tile type' do
       expect(unit.row).to eq(1)
       expect(unit.column).to eq(1)
-      expect(unit.tile).to eq(Support::TileType::PLAYER)
+      expect(unit.tile).to eq(Vanilla::Support::TileType::PLAYER)
       expect(unit.grid).to eq(grid)
     end
 
     it 'sets the tile type on the grid cell' do
-      expect(grid.cell(1, 1).tile).to eq(Support::TileType::PLAYER)
+      expect(grid.cell(1, 1).tile).to eq(Vanilla::Support::TileType::PLAYER)
     end
   end
 
@@ -29,18 +29,18 @@ RSpec.describe Vanilla::Unit do
 
     it 'updates the tile type on the new cell' do
       unit.move_to(2, 2)
-      expect(grid.cell(2, 2).tile).to eq(Support::TileType::PLAYER)
+      expect(grid.cell(2, 2).tile).to eq(Vanilla::Support::TileType::PLAYER)
     end
 
     it 'clears the tile type on the old cell' do
       unit.move_to(2, 2)
-      expect(grid.cell(1, 1).tile).to eq(Support::TileType::FLOOR)
+      expect(grid.cell(1, 1).tile).to eq(Vanilla::Support::TileType::FLOOR)
     end
   end
 
   describe '#found_stairs?' do
     it 'returns true when the unit is on stairs' do
-      grid.cell(1, 1).tile = Support::TileType::STAIRS
+      grid.cell(1, 1).tile = Vanilla::Support::TileType::STAIRS
       expect(unit.found_stairs?).to be_truthy
     end
 
@@ -61,7 +61,8 @@ RSpec.describe Vanilla::Unit do
     end
 
     it 'returns the actual damage taken' do
-      expect(unit.take_damage(10)).to eq(10)
+      damage = 10
+      expect(unit.take_damage(damage)).to eq(damage - unit.defense)
     end
   end
 
