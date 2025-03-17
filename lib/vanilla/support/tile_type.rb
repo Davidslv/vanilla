@@ -2,7 +2,7 @@ module Vanilla
   module Support
     module TileType
       FLOOR = ' '
-      WALL = '█'
+      WALL = '#'
       PLAYER = '@'
       MONSTER = 'M'
       STAIRS = '%'

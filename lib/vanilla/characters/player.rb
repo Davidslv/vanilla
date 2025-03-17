@@ -34,7 +34,7 @@ module Vanilla
         @health = @max_health
         @attack += 2
         @defense += 1
-        @experience -= experience_to_next_level
+        @experience = 0
       end
 
       def alive?
@@ -60,13 +60,7 @@ module Vanilla
       end
 
       def experience_to_next_level
-        100 * @level
-      end
-
-      private
-
-      def level_up_threshold
-        100 * @level
+        100
       end
     end
   end

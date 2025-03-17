@@ -23,7 +23,7 @@ module Vanilla
     # The `occupied?` method checks if the cell is occupied.
     class Cell
       attr_reader :row, :column
-      attr_accessor :north, :south, :east, :west, :tile, :distance, :dead_end
+      attr_accessor :north, :south, :east, :west, :tile, :distance, :dead_end, :content
 
       # Initialize a new cell with its position in the grid
       # @param row [Integer] The row position of the cell
@@ -34,6 +34,7 @@ module Vanilla
         @links = {}
         @tile = Vanilla::Support::TileType::FLOOR
         @dead_end = false
+        @content = nil
       end
 
       # Get the position of the cell as an array
@@ -134,11 +135,15 @@ module Vanilla
       # Check if the cell is occupied
       # @return [Boolean] True if the cell is occupied, false otherwise
       def occupied?
-        tile != Vanilla::Support::TileType::FLOOR
+        tile != Vanilla::Support::TileType::FLOOR || content
+      end
+
+      def walkable?
+        tile != Vanilla::Support::TileType::WALL && content.nil?
       end
 
       def to_s
-        Vanilla::Support::TileType.tile_to_s(tile)
+        Vanilla::Support::TileType.to_s(tile)
       end
     end
   end

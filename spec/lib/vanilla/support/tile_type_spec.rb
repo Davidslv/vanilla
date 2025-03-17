@@ -13,7 +13,7 @@ RSpec.describe Vanilla::Support::TileType do
 
     it 'defines tile types with correct values' do
       expect(described_class::FLOOR).to eq(' ')
-      expect(described_class::WALL).to eq('█')
+      expect(described_class::WALL).to eq('#')
       expect(described_class::PLAYER).to eq('@')
       expect(described_class::MONSTER).to eq('M')
       expect(described_class::STAIRS).to eq('%')
@@ -32,17 +32,16 @@ RSpec.describe Vanilla::Support::TileType do
     it 'returns false for invalid tile types' do
       expect(described_class.valid?('X')).to be_falsey
       expect(described_class.valid?('Y')).to be_falsey
-      expect(described_class.valid?(' ')).to be_falsey
     end
   end
 
   describe '.tile_to_s' do
     it 'returns the string representation of a tile type' do
       expect(described_class.tile_to_s(described_class::FLOOR)).to eq(' ')
-      expect(described_class.tile_to_s(described_class::WALL)).to eq('█')
+      expect(described_class.tile_to_s(described_class::WALL)).to eq('#')
       expect(described_class.tile_to_s(described_class::PLAYER)).to eq('@')
       expect(described_class.tile_to_s(described_class::MONSTER)).to eq('M')
-      expect(described_class.tile_to_s(described_class::STAIRS)).to eq('>')
+      expect(described_class.tile_to_s(described_class::STAIRS)).to eq('%')
     end
 
     it 'raises an error for invalid tile types' do

@@ -1,11 +1,13 @@
 module Vanilla
   class Command
     require_relative 'support/tile_type'
-    attr_reader :player, :terminal, :messages
+    require_relative 'movement'
+    attr_reader :player, :terminal, :messages, :grid
 
     def initialize(player:, terminal:)
       @player = player
       @terminal = terminal
+      @grid = player.grid
       @messages = []
     end
 
@@ -33,10 +35,10 @@ module Vanilla
     private
 
     def handle_movement(direction)
-      result = Movement.move(grid: player.grid, unit: player, direction: direction)
+      result = Movement.move(grid: grid, unit: player, direction: direction)
       
       if result
-        handle_cell_interaction(player.grid[player.row, player.column])
+        handle_cell_interaction(grid.cell_at(player.row, player.column))
         add_message("You move #{direction_name(direction)}")
       else
         add_message("You hit a wall!")
@@ -45,7 +47,7 @@ module Vanilla
 
     def handle_cell_interaction(cell)
       if cell.monster?
-        monster = player.grid.monsters.find { |m| m.row == cell.row && m.column == cell.column }
+        monster = grid.monsters.find { |m| m.row == cell.row && m.column == cell.column }
         initiate_combat(monster) if monster
       elsif cell.stairs?
         player.found_stairs = true
@@ -89,9 +91,9 @@ module Vanilla
         add_message("The #{monster.name} falls to the ground, defeated!")
         add_message("You gain #{monster.experience_value} experience points!")
         player.gain_experience(monster.experience_value)
-        player.grid.monsters.delete(monster)
+        grid.monsters.delete(monster)
         # Clear the monster's tile after it's defeated
-        player.grid[monster.row, monster.column].tile = Vanilla::Support::TileType::FLOOR
+        grid.cell_at(monster.row, monster.column).tile = Vanilla::Support::TileType::FLOOR
       end
     end
 

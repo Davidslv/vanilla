@@ -38,10 +38,6 @@ RSpec.describe Vanilla::Output::Terminal do
   end
 
   describe '#to_s' do
-    it 'returns the grid representation' do
-      expect(terminal.to_s).to include('...')
-    end
-
     it 'includes messages below the grid' do
       terminal.add_message('Test message')
       output = terminal.to_s

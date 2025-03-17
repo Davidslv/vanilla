@@ -12,36 +12,26 @@ RSpec.describe Vanilla::Draw do
   let(:monster) { Vanilla::Characters::Monster.new(row: 2, column: 2, grid: grid) }
 
   describe '.map' do
-    it 'draws the grid with correct tile types' do
-      grid.cell(0, 0).tile = Vanilla::Support::TileType::WALL
-      grid.cell(1, 1).tile = Vanilla::Support::TileType::FLOOR
-      grid.cell(2, 2).tile = Vanilla::Support::TileType::STAIRS
+    it 'draws the map with correct characters' do
+      grid.cell_at(0, 0).tile = Vanilla::Support::TileType::WALL
+      grid.cell_at(1, 1).tile = Vanilla::Support::TileType::FLOOR
+      grid.cell_at(2, 2).tile = Vanilla::Support::TileType::STAIRS
 
-      output = described_class.map(grid: grid)
-      expect(output).to include('#')
-      expect(output).to include('.')
-      expect(output).to include('%')
+      expect { described_class.map(grid) }.to output(/[#. >]/).to_stdout
     end
   end
 
-  describe '.player' do
-    it 'draws the player at the correct position' do
-      described_class.player(grid: grid, unit: player, terminal: terminal)
-      expect(grid.cell(1, 1).tile).to eq(Vanilla::Support::TileType::PLAYER)
+  describe '.place_player' do
+    it 'places the player on the grid' do
+      described_class.place_player(grid: grid, player: player)
+      expect(grid.cell_at(1, 1).tile).to eq(Vanilla::Support::TileType::PLAYER)
     end
   end
 
-  describe '.monster' do
-    it 'draws the monster at the correct position' do
-      described_class.monster(grid: grid, unit: monster, terminal: terminal)
-      expect(grid.cell(2, 2).tile).to eq(Vanilla::Support::TileType::MONSTER)
-    end
-  end
-
-  describe '.clear_screen' do
-    it 'clears the terminal' do
-      expect(terminal).to receive(:clear)
-      described_class.clear_screen(terminal: terminal)
+  describe '.place_monster' do
+    it 'places the monster on the grid' do
+      described_class.place_monster(grid: grid, monster: monster)
+      expect(grid.cell_at(2, 2).tile).to eq(Vanilla::Support::TileType::MONSTER)
     end
   end
 

@@ -19,14 +19,23 @@ module Vanilla
     end
 
     def move_to(new_row, new_col)
-      grid[row, column].tile = Vanilla::Support::TileType::FLOOR
+      target_cell = grid[new_row, new_col]
+      return false unless target_cell
+
+      if target_cell.tile == Vanilla::Support::TileType::STAIRS
+        @found_stairs = true
+      end
+
+      current_cell = grid[row, column]
+      current_cell.tile = Vanilla::Support::TileType::FLOOR
       @row = new_row
       @column = new_col
-      grid[row, column].tile = tile
+      target_cell.tile = tile
+      true
     end
 
     def take_damage(amount)
-      actual_damage = [amount - defense, 1].max
+      actual_damage = [amount - defense, 0].max
       @health = [health - actual_damage, 0].max
       actual_damage
     end
@@ -40,7 +49,7 @@ module Vanilla
     end
 
     def found_stairs?
-      found_stairs
+      @found_stairs
     end
 
     def gain_experience(amount)

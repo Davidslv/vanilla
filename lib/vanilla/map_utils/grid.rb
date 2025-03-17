@@ -24,8 +24,26 @@ module Vanilla
         cells[row][column]
       end
 
-      def cell(row, column)
+      def cell_at(row, column)
         self[row, column]
+      end
+
+      def place(entity, row, column)
+        cell = cell_at(row, column)
+        return false unless cell
+        cell.content = entity
+        true
+      end
+
+      def clear(row, column)
+        cell = cell_at(row, column)
+        return false unless cell
+        cell.content = nil
+        true
+      end
+
+      def within_bounds?(row, column)
+        row >= 0 && row < rows && column >= 0 && column < columns
       end
 
       def random_cell

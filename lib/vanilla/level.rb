@@ -40,7 +40,7 @@ module Vanilla
       num_monsters.times do
         row = rand(0..@grid.rows - 1)
         column = rand(0..@grid.columns - 1)
-        cell = @grid.cell(row, column)
+        cell = @grid.cell_at(row, column)
         if cell.tile == Vanilla::Support::TileType::FLOOR && !cell.player?
           monster = Characters::Monster.new(row: row, column: column, grid: @grid)
           @monsters << monster
@@ -52,7 +52,7 @@ module Vanilla
       loop do
         row = rand(0..@grid.rows - 1)
         column = rand(0..@grid.columns - 1)
-        cell = @grid.cell(row, column)
+        cell = @grid.cell_at(row, column)
         if cell.tile == Vanilla::Support::TileType::FLOOR && !cell.player?
           cell.tile = Vanilla::Support::TileType::STAIRS
           break

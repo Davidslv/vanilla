@@ -20,9 +20,9 @@ RSpec.describe Vanilla::Characters::Monster do
   end
 
   describe '#take_damage' do
-    it 'reduces health by the damage amount' do
+    it 'reduces health by the damage amount minus defense' do
       monster.take_damage(10)
-      expect(monster.health).to eq(10)
+      expect(monster.health).to eq(12)
     end
 
     it 'does not reduce health below 0' do
@@ -31,7 +31,7 @@ RSpec.describe Vanilla::Characters::Monster do
     end
 
     it 'returns the actual damage taken' do
-      expect(monster.take_damage(10)).to eq(10)
+      expect(monster.take_damage(10)).to eq(8)
     end
   end
 

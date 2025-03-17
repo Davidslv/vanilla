@@ -26,6 +26,20 @@ require_relative 'vanilla/draw'
 require_relative 'vanilla/unit'
 require_relative 'vanilla/level'
 
+# version
+require_relative 'vanilla/version'
+
+# entity
+require_relative 'vanilla/entity'
+
+# components
+require_relative 'vanilla/components/base_component'
+require_relative 'vanilla/components/transform_component'
+require_relative 'vanilla/components/stats_component'
+
+# commands
+require_relative 'vanilla/command'
+
 module Vanilla
   class Error < StandardError; end
 
@@ -45,28 +59,6 @@ module Vanilla
     C: :KEY_RIGHT,
     D: :KEY_LEFT
   }.freeze
-
-
-  require_relative 'vanilla/support/tile_type'
-
-  # draw
-  require_relative 'vanilla/draw'
-
-  # map
-  require_relative 'vanilla/map_utils'
-  require_relative 'vanilla/map'
-
-  # output
-  require_relative 'vanilla/output/terminal'
-
-  # algorithms
-  require_relative 'vanilla/algorithms'
-
-  # movement
-  require_relative 'vanilla/movement'
-
-  # commands
-  require_relative 'vanilla/command'
 
   $seed = nil
 

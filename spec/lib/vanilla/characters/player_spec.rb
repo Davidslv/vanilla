@@ -24,7 +24,7 @@ RSpec.describe Vanilla::Characters::Player do
   describe '#take_damage' do
     it 'reduces health by the damage amount' do
       player.take_damage(10)
-      expect(player.health).to eq(40)
+      expect(player.health).to eq(45)
     end
 
     it 'does not reduce health below 0' do
@@ -33,7 +33,7 @@ RSpec.describe Vanilla::Characters::Player do
     end
 
     it 'returns the actual damage taken' do
-      expect(player.take_damage(10)).to eq(10)
+      expect(player.take_damage(10)).to eq(5)
     end
   end
 
