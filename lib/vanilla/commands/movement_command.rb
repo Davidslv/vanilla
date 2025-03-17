@@ -2,81 +2,92 @@ require_relative 'base_command'
 require_relative '../components/transform_component'
 require_relative '../components/movement_component'
 require_relative '../support/tile_type'
+require_relative '../map_utils/grid'
+require_relative '../events/event_manager'
 
 module Vanilla
   module Commands
+    # Command that handles entity movement
     class MovementCommand < BaseCommand
-      attr_reader :direction
-
-      def initialize(world:, entity:, direction:)
-        super(world: world, entity: entity)
+      # Initialize a new movement command
+      #
+      # @param world [World] The game world
+      # @param entity [Entity] The entity to move
+      # @param direction [Array<Integer>] The direction to move as [row_delta, col_delta]
+      def initialize(world, entity, direction)
+        super(world, entity)
         @direction = direction
       end
 
-      def can_execute?
-        transform = get_component(Components::TransformComponent)
+      # Execute the movement
+      #
+      # @return [Boolean] true if movement was successful
+      def execute
+        transform = entity.get_component(Components::TransformComponent)
         return false unless transform
 
-        new_row, new_col = calculate_new_position(transform)
-        return false unless valid_position?(new_row, new_col)
+        target_row = transform.position[0] + @direction[0]
+        target_col = transform.position[1] + @direction[1]
 
-        current_cell = transform.grid.cell_at(transform.position[0], transform.position[1])
-        target_cell = transform.grid.cell_at(new_row, new_col)
-        
-        # Check if cells are linked (there's a passage between them)
-        return false unless current_cell.linked?(target_cell)
+        target_cell = transform.grid.get(target_row, target_col)
+        return false unless target_cell
 
-        # Check if target cell is walkable
-        case target_cell.tile
-        when Support::TileType::FLOOR, Support::TileType::STAIRS
-          true
-        when Support::TileType::MONSTER
-          # Allow movement to monster cells (will trigger combat)
-          true
-        else
-          false
+        # Check if moving to stairs
+        if target_cell.tile == Support::TileType::STAIRS
+          # First move to the stairs position
+          transform.move_to(target_row, target_col)
+          
+          # Create a new grid for the next level
+          old_grid = transform.grid
+          new_grid = MapUtils::Grid.new(old_grid.rows, old_grid.cols)
+          
+          # Initialize with floor tiles
+          new_grid.each_cell do |cell|
+            cell.tile = Support::TileType::FLOOR
+          end
+          
+          # Place stairs in a random location
+          stairs_row = rand(new_grid.rows)
+          stairs_col = rand(new_grid.cols)
+          stairs_cell = new_grid.get(stairs_row, stairs_col)
+          stairs_cell.tile = Support::TileType::STAIRS
+          
+          # Update player's grid and position
+          transform.update_grid(new_grid)
+          transform.move_to(1, 1) # Place player in a safe starting position
+          
+          # Emit level transition event
+          emit_event(:level_transition, {
+            old_grid: old_grid,
+            new_grid: new_grid,
+            entity: entity
+          })
+          
+          return true
         end
-      end
 
-      def execute
-        return false unless can_execute?
-
-        transform = get_component(Components::TransformComponent)
-        new_row, new_col = calculate_new_position(transform)
-        target_cell = transform.grid.cell_at(new_row, new_col)
-
-        case target_cell.tile
-        when Support::TileType::MONSTER
-          emit_event(:combat_initiated, target: target_cell.content)
-          false # Movement doesn't complete when initiating combat
-        when Support::TileType::STAIRS
-          transform.move_to(new_row, new_col)
-          emit_event(:stairs_found)
-          true
-        else
-          transform.move_to(new_row, new_col)
-          emit_event(:movement_completed, from: transform.position, to: [new_row, new_col])
-          true
+        # Handle normal movement
+        if target_cell.tile == Support::TileType::FLOOR
+          transform.move_to(target_row, target_col)
+          return true
         end
+
+        false
       end
 
       private
 
-      def calculate_new_position(transform)
-        current_row, current_col = transform.position
-        
-        case direction
-        when :left then [current_row, current_col - 1]
-        when :right then [current_row, current_col + 1]
-        when :up then [current_row - 1, current_col]
-        when :down then [current_row + 1, current_col]
-        end
+      def calculate_target_position(transform)
+        [
+          transform.position[0] + @direction[0],
+          transform.position[1] + @direction[1]
+        ]
       end
 
-      def valid_position?(row, col)
-        transform = get_component(Components::TransformComponent)
-        grid = transform.grid
-        row >= 0 && col >= 0 && row < grid.rows && col < grid.columns
+      def handle_monster_collision(target_cell)
+        return false unless target_cell.content.is_a?(Entities::Monster)
+        # Handle monster collision logic here
+        true
       end
     end
   end
