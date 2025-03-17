@@ -90,6 +90,14 @@ module Vanilla
         end
       end
 
+      # Get the contents of a cell
+      #
+      # @param cell [Cell] The cell to get contents from
+      # @return [String] The string representation of the cell's contents
+      def contents_of(cell)
+        cell.to_s
+      end
+
       private
 
       # Configure cell neighbors
