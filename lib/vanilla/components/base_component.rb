@@ -6,7 +6,7 @@ module Vanilla
   module Components
     class BaseComponent
       # @return [Entity] The entity this component is attached to
-      attr_reader :entity
+      attr_accessor :entity
 
       # @param entity [Entity] The entity to attach this component to
       def initialize(entity)
