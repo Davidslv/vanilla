@@ -23,7 +23,6 @@ require_relative 'vanilla/characters/monster'
 # map
 require_relative 'vanilla/map'
 require_relative 'vanilla/draw'
-require_relative 'vanilla/unit'
 require_relative 'vanilla/level'
 
 # version
@@ -63,10 +62,10 @@ module Vanilla
   $seed = nil
 
   def self.run
-    # Create initial grid with reasonable starting dimensions
+    # Create initial grid with minimum dimensions from Level class
     initial_grid = Map.create(
-      rows: 3,
-      columns: 3,
+      rows: Level::MIN_ROWS,
+      columns: Level::MIN_COLUMNS,
       algorithm: Algorithms::BinaryTree,
       seed: rand(999_999_999_999_999)
     )
@@ -91,22 +90,15 @@ module Vanilla
 
       if current_player.found_stairs?
         # Create a new level with increased size for progression
-        rows = level.grid.rows + rand(2..4)
-        columns = level.grid.columns + rand(2..4)
-        next_grid = Map.create(
+        rows = [level.grid.rows + rand(2..4), Level::MAX_ROWS].min
+        columns = [level.grid.columns + rand(2..4), Level::MAX_COLUMNS].min
+        
+        level = Level.random(
+          player: current_player,
           rows: rows,
-          columns: columns,
-          algorithm: Algorithms::BinaryTree,
-          seed: rand(999_999_999_999_999)
+          columns: columns
         )
         
-        # Clear player from old grid and update to new grid
-        current_player.grid[current_player.row, current_player.column].tile = Vanilla::Support::TileType::FLOOR
-        current_player.instance_variable_set(:@grid, next_grid)
-        current_player.move_to(1, 1)
-        
-        # Create new level
-        level = Level.new(grid: next_grid, player: current_player)
         current_player.found_stairs = false
       end
     end

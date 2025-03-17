@@ -2,24 +2,41 @@ require_relative '../entity'
 require_relative '../support/tile_type'
 require_relative '../components/transform_component'
 require_relative '../components/movement_component'
+require_relative '../components/stats_component'
+require_relative '../components/combat_component'
 
 module Vanilla
   module Characters
     class Monster < Entity
       attr_reader :name, :experience_value, :health, :max_health, :attack, :defense
 
-      def initialize(row:, column:, grid:, name: 'Monster', health: 20, attack: 5, defense: 2, experience_value: 10)
+      def initialize(grid:, row:, column:, level: 1)
         super()
-        @name = name
-        @max_health = health
-        @health = health
-        @attack = attack
-        @defense = defense
-        @experience_value = experience_value
-
-        # Add components
-        add_component(Components::TransformComponent.new(self, grid, row, column, Vanilla::Support::TileType::MONSTER))
-        add_component(Components::MovementComponent)
+        
+        # Add transform component for position
+        add_component(Components::TransformComponent.new(
+          self,
+          grid: grid,
+          row: row,
+          column: column,
+          tile: Support::TileType::MONSTER
+        ))
+        
+        # Add stats component with level-scaled attributes
+        stats = Components::StatsComponent.new(self)
+        stats.health = 20 + (level * 5)      # Base 20 HP, +5 per level
+        stats.max_health = stats.health
+        stats.attack = 5 + (level * 2)       # Base 5 attack, +2 per level
+        stats.defense = 2 + level            # Base 2 defense, +1 per level
+        stats.level = level
+        stats.experience = 0
+        add_component(stats)
+        
+        # Add combat component for battle mechanics
+        add_component(Components::CombatComponent.new(self))
+        
+        # Add movement component
+        add_component(Components::MovementComponent.new(self))
       end
 
       def alive?

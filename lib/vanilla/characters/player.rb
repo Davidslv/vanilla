@@ -2,6 +2,8 @@ require_relative '../entity'
 require_relative '../support/tile_type'
 require_relative '../components/transform_component'
 require_relative '../components/movement_component'
+require_relative '../components/stats_component'
+require_relative '../components/combat_component'
 
 module Vanilla
   module Characters
@@ -22,8 +24,29 @@ module Vanilla
         @defense = 5
 
         # Add components
-        add_component(Components::TransformComponent.new(self, grid, row, column, Vanilla::Support::TileType::PLAYER))
-        add_component(Components::MovementComponent)
+        add_component(Components::TransformComponent.new(
+          self,
+          grid: grid,
+          row: row,
+          column: column,
+          tile: Support::TileType::PLAYER
+        ))
+        
+        # Add stats component for character attributes
+        stats = Components::StatsComponent.new(self)
+        stats.health = @health
+        stats.max_health = @max_health
+        stats.attack = @attack
+        stats.defense = @defense
+        stats.level = @level
+        stats.experience = @experience
+        add_component(stats)
+        
+        # Add combat component for battle mechanics
+        add_component(Components::CombatComponent.new(self))
+        
+        # Add movement component
+        add_component(Components::MovementComponent.new(self))
       end
 
       def gain_experience(amount)

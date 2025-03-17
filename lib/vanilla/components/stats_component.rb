@@ -10,35 +10,19 @@ module Vanilla
     # @example Creating stats for a player
     #   stats = StatsComponent.new(player, health: 50, attack: 10)
     class StatsComponent < Component
-      # @return [Integer] Current health points
-      attr_reader :health
-      # @return [Integer] Maximum health points
-      attr_reader :max_health
-      # @return [Integer] Attack power
-      attr_reader :attack
-      # @return [Integer] Defense rating
-      attr_reader :defense
-      # @return [Integer] Current experience points
-      attr_reader :experience
-      # @return [Integer] Current level
-      attr_reader :level
+      attr_accessor :health, :max_health, :attack, :defense, :level, :experience
 
       # Creates a new stats component
       #
       # @param entity [Entity] The entity this component belongs to
-      # @param health [Integer] Starting health points
-      # @param attack [Integer] Starting attack power
-      # @param defense [Integer] Starting defense rating
-      # @param level [Integer] Starting level
-      # @param experience [Integer] Starting experience points
-      def initialize(entity, health: 50, attack: 10, defense: 5, level: 1, experience: 0)
-        super(entity)
-        @max_health = health
-        @health = @max_health
-        @attack = attack
-        @defense = defense
-        @level = level
-        @experience = experience
+      def initialize(entity)
+        super
+        @health = 0
+        @max_health = 0
+        @attack = 0
+        @defense = 0
+        @level = 1
+        @experience = 0
       end
 
       # Checks if the entity is still alive

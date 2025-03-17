@@ -2,7 +2,10 @@ module Vanilla
   class Command
     require_relative 'support/tile_type'
     require_relative 'components/movement_component'
+    require_relative 'components/transform_component'
+    require_relative 'components/combat_component'
     require_relative 'level'
+
     attr_reader :player, :terminal, :messages, :grid
 
     def initialize(player:, terminal:)
@@ -10,6 +13,8 @@ module Vanilla
       @terminal = terminal
       @grid = player.grid
       @messages = []
+      @transform = player.get_component(Components::TransformComponent)
+      @combat = player.get_component(Components::CombatComponent)
     end
 
     def self.process(key:, grid:, player:, terminal:)
@@ -18,13 +23,13 @@ module Vanilla
 
     def process(key)
       case key
-      when 'h', 'a'
+      when 'h'
         handle_movement(:left)
-      when 'j', 's'
+      when 'j'
         handle_movement(:down)
-      when 'k', 'w'
+      when 'k'
         handle_movement(:up)
-      when 'l', 'd'
+      when 'l'
         handle_movement(:right)
       when "\C-c", "q"
         exit
@@ -36,138 +41,85 @@ module Vanilla
     private
 
     def handle_movement(direction)
-      movement = player.get_component(Components::MovementComponent)
-      transform = player.get_component(Components::TransformComponent)
+      messages = []
+      new_row, new_col = calculate_new_position(direction)
       
-      # Get the target cell before moving
-      current_cell = grid.cell_at(transform.row, transform.column)
-      target_cell = case direction
-        when :left
-          current_cell.west
-        when :right
-          current_cell.east
-        when :up
-          current_cell.north
-        when :down
-          current_cell.south
-      end
+      return add_message("Can't move there!") unless valid_position?(new_row, new_col)
+
+      current_cell = @grid.cell_at(@transform.position[0], @transform.position[1])
+      target_cell = @grid.cell_at(new_row, new_col)
       
-      # Store the target cell's original tile
-      target_tile = target_cell&.tile
-      
-      # Attempt to move
-      result = movement.move(direction)
-      
-      if result
-        add_message("You move #{direction_name(direction)}")
-        # Check the original tile of the cell we moved to
-        if target_tile == Vanilla::Support::TileType::STAIRS
-          add_message("You found the stairs!")
-          add_message("Descending to the next level...")
-          
-          # Create new level and update references
-          @level = Level.random(player: player)
-          @grid = @level.grid
-          @terminal.grid = @grid
-          
-          # Update the player's grid reference
-          transform.update_grid(@grid)
-          
-          add_message("You find yourself in a new area!")
-        elsif target_cell.monster?
-          monster = grid.monsters.find { |m| m.row == target_cell.row && m.column == target_cell.column }
-          initiate_combat(monster) if monster
-        end
-      else
+      # Check if cells are linked (there's a passage between them)
+      unless current_cell.linked?(target_cell)
         add_message("You hit a wall!")
+        return
+      end
+      
+      case target_cell.tile
+      when Support::TileType::MONSTER
+        messages.concat(handle_combat(target_cell.content))
+      when Support::TileType::STAIRS
+        messages.concat(handle_stairs(new_row, new_col))
+      when Support::TileType::FLOOR
+        @transform.move_to(new_row, new_col)
+        messages << "You move to #{new_row},#{new_col}"
+      else
+        messages << "You can't move there!"
+      end
+
+      messages.each { |msg| add_message(msg) }
+      messages
+    end
+
+    def handle_stairs(new_row, new_col)
+      messages = []
+      messages << "You found stairs leading to another level!"
+      messages << "Descending to the next level..."
+
+      # Move to stairs first (this ensures we're in a valid position before transition)
+      @transform.move_to(new_row, new_col)
+      
+      # Set the found_stairs flag to trigger level change
+      @player.found_stairs = true
+      
+      messages
+    end
+
+    def handle_combat(monster)
+      return ["No monster to fight!"] unless monster
+
+      if @combat.attack(monster)
+        messages = @combat.messages.dup
+        @combat.messages.clear
+
+        # If monster was defeated, update the cell
+        monster_stats = monster.get_component(Components::StatsComponent)
+        if !monster_stats.alive?
+          monster_transform = monster.get_component(Components::TransformComponent)
+          row, col = monster_transform.position
+          @grid.cell_at(row, col).tile = Support::TileType::FLOOR
+          @grid.cell_at(row, col).content = nil
+        end
+
+        messages
+      else
+        ["Combat failed!"]
       end
     end
 
-    def handle_cell_interaction(cell)
-      # Debug: Print cell information
-      add_message("DEBUG: Cell tile is: #{cell.tile.inspect}")
-      add_message("DEBUG: Is stairs? #{cell.stairs?}")
+    def calculate_new_position(direction)
+      current_row, current_col = @transform.position
       
-      if cell.monster?
-        monster = grid.monsters.find { |m| m.row == cell.row && m.column == cell.column }
-        initiate_combat(monster) if monster
-      elsif cell.stairs?
-        # Immediately generate new level when player moves onto stairs
-        add_message("You found the stairs!")
-        add_message("Descending to the next level...")
-        
-        # Create new level and update references
-        @level = Level.random(player: player)
-        @grid = @level.grid
-        @terminal.grid = @grid
-        
-        # Update the player's grid reference
-        movement = player.get_component(Components::MovementComponent)
-        transform = player.get_component(Components::TransformComponent)
-        transform.update_grid(@grid)
-        
-        add_message("You find yourself in a new area!")
+      case direction
+      when :left then [current_row, current_col - 1]
+      when :right then [current_row, current_col + 1]
+      when :up then [current_row - 1, current_col]
+      when :down then [current_row + 1, current_col]
       end
     end
 
-    def progress_to_next_level
-      add_message("Descending to the next level...")
-      
-      # Clear the stairs tile before transitioning
-      current_cell = grid.cell_at(player.row, player.column)
-      current_cell.tile = Vanilla::Support::TileType::FLOOR
-      
-      # Create new level and update references
-      @level = Level.random(player: player)
-      @grid = @level.grid
-      @terminal.grid = @grid
-      
-      # Reset player's stairs flag
-      player.found_stairs = false
-      
-      add_message("You find yourself in a new area!")
-    end
-
-    def direction_name(direction)
-      direction.to_s
-    end
-
-    def initiate_combat(monster)
-      add_message("You encounter a #{monster.name}!")
-      add_message("The #{monster.name} growls menacingly.")
-      
-      while monster.alive? && player.alive?
-        combat_round(monster)
-        break unless monster.alive? && player.alive?
-      end
-
-      if !player.alive?
-        add_message("You have been defeated!")
-        exit
-      end
-    end
-
-    def combat_round(monster)
-      # Player's turn
-      damage_dealt = player.attack_target(monster)
-      add_message("You strike the #{monster.name} for #{damage_dealt} damage!")
-      add_message("The #{monster.name} has #{monster.health} HP remaining.")
-
-      return unless monster.alive?
-
-      # Monster's turn
-      damage_taken = monster.attack_target(player)
-      add_message("The #{monster.name} retaliates for #{damage_taken} damage!")
-      add_message("You have #{player.health} HP remaining.")
-
-      if !monster.alive?
-        add_message("The #{monster.name} falls to the ground, defeated!")
-        add_message("You gain #{monster.experience_value} experience points!")
-        player.gain_experience(monster.experience_value)
-        grid.monsters.delete(monster)
-        # Clear the monster's tile after it's defeated
-        grid.cell_at(monster.row, monster.column).tile = Vanilla::Support::TileType::FLOOR
-      end
+    def valid_position?(row, col)
+      row >= 0 && col >= 0 && row < @grid.rows && col < @grid.columns
     end
 
     def add_message(message)
