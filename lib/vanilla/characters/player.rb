@@ -1,52 +1,50 @@
 require_relative '../entity'
-require_relative '../support/tile_type'
 require_relative '../components/transform_component'
-require_relative '../components/movement_component'
-require_relative '../components/stats_component'
 require_relative '../components/combat_component'
+require_relative '../components/stats_component'
+require_relative '../support/tile_type'
 
 module Vanilla
   module Characters
     class Player < Entity
+      include Support::TileType
+
       attr_accessor :name, :level, :experience, :inventory, :health, :max_health, :attack, :defense
 
-      def initialize(name: 'player', row:, column:, grid:)
+      def initialize(grid:, row:, col:)
         super()
-        @name = name
-        @level = 1
-        @experience = 0
-        @inventory = []
         
-        # Combat attributes
-        @max_health = 50
-        @health = @max_health
-        @attack = 10
-        @defense = 5
-
-        # Add components
         add_component(Components::TransformComponent.new(
-          self,
-          grid: grid,
-          row: row,
-          column: column,
-          tile: Support::TileType::PLAYER
+          self, grid, row, col, tile: PLAYER
         ))
         
-        # Add stats component for character attributes
-        stats = Components::StatsComponent.new(self)
-        stats.health = @health
-        stats.max_health = @max_health
-        stats.attack = @attack
-        stats.defense = @defense
-        stats.level = @level
-        stats.experience = @experience
-        add_component(stats)
+        add_component(Components::CombatComponent.new(
+          self, strength: 10
+        ))
         
-        # Add combat component for battle mechanics
-        add_component(Components::CombatComponent.new(self))
-        
-        # Add movement component
-        add_component(Components::MovementComponent.new(self))
+        add_component(Components::StatsComponent.new(
+          self, hp: 100, max_hp: 100, level: 1
+        ))
+      end
+
+      def transform
+        get_component(Components::TransformComponent)
+      end
+
+      def combat
+        get_component(Components::CombatComponent)
+      end
+
+      def stats
+        get_component(Components::StatsComponent)
+      end
+
+      def position
+        transform&.position
+      end
+
+      def current_cell
+        transform&.current_cell
       end
 
       def gain_experience(amount)
@@ -92,19 +90,19 @@ module Vanilla
       end
 
       def grid
-        get_component(Components::TransformComponent)&.grid
+        transform&.grid
       end
 
       def row
-        get_component(Components::TransformComponent)&.row
+        transform&.row
       end
 
       def column
-        get_component(Components::TransformComponent)&.column
+        transform&.column
       end
 
       def tile
-        get_component(Components::TransformComponent)&.tile
+        transform&.tile
       end
 
       def found_stairs=(value)
