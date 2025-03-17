@@ -22,7 +22,7 @@ module Vanilla
         super()
         
         # Initialize transform component
-        transform = Components::TransformComponent.new(grid, [row, col])
+        transform = Components::TransformComponent.new(self, grid, row, col)
         add_component(transform)
         
         add_component(Components::StatsComponent.new(

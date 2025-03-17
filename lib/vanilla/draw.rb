@@ -18,9 +18,9 @@ module Vanilla
           content = " #{content} " if content.length == 1
           content = " #{content}" if content.length == 2
 
-          # Get boundaries based on neighboring cells
-          east_boundary = east_boundary_for(cell)
-          south_boundary = south_boundary_for(cell)
+          # Get boundaries
+          east_boundary = "|"
+          south_boundary = "---"
           corner = "+"
 
           top << content << east_boundary
@@ -57,22 +57,6 @@ module Vanilla
 
     def self.display(terminal:)
       terminal.write
-    end
-
-    private
-
-    def self.east_boundary_for(cell)
-      return "|" unless cell.tile == Support::TileType::FLOOR || cell.tile == Support::TileType::STAIRS
-      east_neighbor = cell.east
-      return "|" unless east_neighbor && (east_neighbor.tile == Support::TileType::FLOOR || east_neighbor.tile == Support::TileType::STAIRS)
-      " "
-    end
-
-    def self.south_boundary_for(cell)
-      return "---" unless cell.tile == Support::TileType::FLOOR || cell.tile == Support::TileType::STAIRS
-      south_neighbor = cell.south
-      return "---" unless south_neighbor && (south_neighbor.tile == Support::TileType::FLOOR || south_neighbor.tile == Support::TileType::STAIRS)
-      "   "
     end
   end
 end

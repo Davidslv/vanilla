@@ -8,8 +8,8 @@ module Vanilla
       # @return [Entity] The entity this component is attached to
       attr_accessor :entity
 
-      def initialize
-        @entity = nil
+      def initialize(entity = nil)
+        @entity = entity
       end
 
       # Called every game tick (frame) to update the component's state.

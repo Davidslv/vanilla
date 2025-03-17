@@ -1,18 +1,18 @@
 module Vanilla
   class Map
-    def initialize(rows: 10, columns: 10, algorithm:, seed: nil)
+    def initialize(rows: 10, cols: 10, algorithm:, seed: nil)
       $seed = seed || rand(999_999_999_999_999)
       srand($seed)
 
-      @rows, @columns, @algorithm = rows, columns, algorithm
+      @rows, @cols, @algorithm = rows, cols, algorithm
     end
 
-    def self.create(rows:, columns:, algorithm: Vanilla::Algorithms::BinaryTree, seed:)
-      new(rows: rows, columns: columns, algorithm: algorithm, seed: seed).create
+    def self.create(rows:, cols:, algorithm: Vanilla::Algorithms::BinaryTree, seed:)
+      new(rows: rows, cols: cols, algorithm: algorithm, seed: seed).create
     end
 
     def create
-      grid = Vanilla::MapUtils::Grid.new(@rows, @columns)
+      grid = Vanilla::MapUtils::Grid.new(rows: @rows, cols: @cols)
       
       # Initialize all cells as walls
       grid.each_cell do |cell|
@@ -23,7 +23,7 @@ module Vanilla
       @algorithm.on(grid)
       
       # Ensure starting position is floor
-      starting_cell = grid.get(1, 1)
+      starting_cell = grid.cell_at(1, 1)
       starting_cell.tile = Support::TileType::FLOOR
       
       # Place stairs in a random floor tile

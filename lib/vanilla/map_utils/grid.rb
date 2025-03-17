@@ -10,7 +10,7 @@ module Vanilla
       #
       # @param rows [Integer] Number of rows in the grid
       # @param cols [Integer] Number of columns in the grid
-      def initialize(rows, cols)
+      def initialize(rows:, cols:)
         @rows = rows
         @cols = cols
         @grid = Array.new(rows) do |row|
@@ -26,11 +26,10 @@ module Vanilla
       # @param row [Integer] The row position
       # @param col [Integer] The column position
       # @return [Cell, nil] The cell at the position, or nil if out of bounds
-      def get(row, col)
+      def cell_at(row, col)
         return nil unless valid_position?(row, col)
         @grid[row][col]
       end
-      alias_method :cell_at, :get
 
       # Set the tile type at the specified position
       #
@@ -90,14 +89,6 @@ module Vanilla
         end
       end
 
-      # Get the contents of a cell
-      #
-      # @param cell [Cell] The cell to get contents from
-      # @return [String] The string representation of the cell's contents
-      def contents_of(cell)
-        cell.to_s
-      end
-
       private
 
       # Configure cell neighbors
@@ -105,10 +96,10 @@ module Vanilla
         each_cell do |cell|
           row, col = cell.row, cell.col
 
-          cell.north = get(row - 1, col)
-          cell.south = get(row + 1, col)
-          cell.west = get(row, col - 1)
-          cell.east = get(row, col + 1)
+          cell.north = cell_at(row - 1, col)
+          cell.south = cell_at(row + 1, col)
+          cell.west = cell_at(row, col - 1)
+          cell.east = cell_at(row, col + 1)
         end
       end
     end

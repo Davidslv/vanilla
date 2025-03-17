@@ -9,7 +9,7 @@ module Vanilla
     # or change position.
     #
     # @example Creating a transform component for a player
-    #   transform = TransformComponent.new(grid, [0, 0])
+    #   transform = TransformComponent.new(player, grid, 0, 0, TileType::PLAYER)
     class TransformComponent < BaseComponent
       include Support::TileType
 
@@ -17,12 +17,14 @@ module Vanilla
 
       # Creates a new transform component
       #
+      # @param entity [Entity] The entity this component belongs to
       # @param grid [MapUtils::Grid] The game grid
-      # @param position [Array<Integer>] Initial [row, col] position
-      def initialize(grid, position)
-        super()
+      # @param row [Integer] Initial row position
+      # @param col [Integer] Initial column position
+      def initialize(entity, grid = nil, row = 1, col = 1)
+        super(entity)
+        @position = [row, col]
         @grid = grid
-        @position = position
         place_on_grid if @grid
       end
 
@@ -32,7 +34,7 @@ module Vanilla
       def update_grid(new_grid)
         # Clear the current position in the old grid
         if @grid
-          current_cell = @grid.get(@position[0], @position[1])
+          current_cell = @grid.cell_at(@position[0], @position[1])
           current_cell.tile = Support::TileType::FLOOR
         end
         
@@ -41,7 +43,7 @@ module Vanilla
         
         # Place the entity in the new grid
         if @grid
-          target_cell = @grid.get(@position[0], @position[1])
+          target_cell = @grid.cell_at(@position[0], @position[1])
           target_cell.tile = Support::TileType::PLAYER
         end
       end
@@ -54,21 +56,21 @@ module Vanilla
       def move_to(row, col)
         return false unless valid_position?(row, col)
         
-        target_cell = @grid.get(row, col)
+        target_cell = @grid.cell_at(row, col)
         return false if target_cell.tile == Support::TileType::WALL
         
         # Store the original tile type
         original_tile = target_cell.tile
         
         # Update the grid
-        current_cell = @grid.get(@position[0], @position[1])
+        current_cell = @grid.cell_at(@position[0], @position[1])
         current_cell.tile = Support::TileType::FLOOR
         
         # Update position
         @position = [row, col]
         
         # Update target cell
-        target_cell = @grid.get(@position[0], @position[1])
+        target_cell = @grid.cell_at(@position[0], @position[1])
         
         # If the target was stairs, preserve that information
         if original_tile == Support::TileType::STAIRS
@@ -103,7 +105,7 @@ module Vanilla
 
       def current_cell
         return nil unless @grid
-        @grid.get(@position[0], @position[1])
+        @grid.cell_at(@position[0], @position[1])
       end
 
       # Check if a position is valid within the grid
@@ -121,20 +123,20 @@ module Vanilla
       def valid_move?(row, col)
         return false unless valid_position?(row, col)
         
-        target_cell = @grid.get(row, col)
+        target_cell = @grid.cell_at(row, col)
         target_cell.tile == Support::TileType::FLOOR || target_cell.tile == Support::TileType::STAIRS
       end
 
       # Places the entity on the grid at its current position
       def place_on_grid
-        target_cell = @grid.get(@position[0], @position[1])
+        target_cell = @grid.cell_at(@position[0], @position[1])
         target_cell.tile = Support::TileType::PLAYER
       end
 
       # Clears the entity's current position on the grid
       def clear_current_position
         return unless @grid
-        current_cell = @grid.get(@position[0], @position[1])
+        current_cell = @grid.cell_at(@position[0], @position[1])
         if current_cell.content == entity
           current_cell.content = nil
           current_cell.tile = Support::TileType::FLOOR
@@ -142,8 +144,8 @@ module Vanilla
       end
 
       def remove_from_grid
-        current_cell = @grid.get(@position[0], @position[1])
-        current_cell.tile = Support::TileType::FLOOR
+        target_cell = @grid.cell_at(@position[0], @position[1])
+        target_cell.tile = Support::TileType::FLOOR
       end
     end
   end
