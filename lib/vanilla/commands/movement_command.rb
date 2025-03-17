@@ -50,7 +50,7 @@ module Vanilla
           
           # Create a new grid for the next level
           old_grid = transform.grid
-          new_grid = MapUtils::Grid.new(old_grid.rows, old_grid.cols)
+          new_grid = MapUtils::Grid.new(rows: old_grid.rows, cols: old_grid.cols)
           
           # Initialize with floor tiles
           new_grid.each_cell do |cell|
