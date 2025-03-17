@@ -87,7 +87,14 @@ module Vanilla
         @position
       end
 
-      # Get current column (alias for col)
+      # Get current row
+      #
+      # @return [Integer] Current row
+      def row
+        @position[0]
+      end
+
+      # Get current column
       #
       # @return [Integer] Current column
       def column
