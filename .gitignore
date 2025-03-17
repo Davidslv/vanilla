@@ -5,3 +5,4 @@ doc/**/*.html
 .yardoc/*
 png-mazes/
 .rspec_status
+debug.log
