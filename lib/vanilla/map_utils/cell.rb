@@ -108,6 +108,13 @@ module Vanilla
         list << west if west
         list
       end
+
+      # Check if this cell is a dead end
+      #
+      # @return [Boolean] true if the cell has only one link
+      def dead_end?
+        @links.size == 1
+      end
     end
   end
 end
