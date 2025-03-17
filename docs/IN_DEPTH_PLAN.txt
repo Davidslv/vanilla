@@ -1,0 +1,238 @@
+# Vanilla Roguelike In-Depth Refactoring Plan
+
+## 1. Core Infrastructure Implementation
+
+### 1.1 Command Pattern Implementation
+- Create base Command interface
+- Implement command queue
+- Add command history for undo/redo
+- Implement command validation
+
+Commands to implement:
+```ruby
+Commands::
+  BaseCommand           # Abstract base command
+  MovementCommand       # Player/monster movement
+  AttackCommand        # Combat actions
+  UseStairsCommand     # Level transitions
+  PickupCommand        # Item interaction
+  InventoryCommand     # Inventory management
+  QuitCommand          # Game exit
+  SaveCommand          # Game saving
+  LoadCommand          # Game loading
+```
+
+### 1.2 Component System
+- Create base Component class
+  - Pure data containers
+  - No behavior logic
+  - Serializable for save/load
+
+Components to implement:
+```ruby
+Components::
+  Transform    # Position, grid reference
+  Movement     # Speed, movement capabilities
+  Combat       # Health, attack, defense
+  Render       # Visual representation
+  Input        # Input handling configuration
+  Collision    # Collision boundaries
+  Stats        # Level, XP, attributes
+  Inventory    # Items, equipment
+```
+
+### 1.3 System Implementation
+- Create specialized systems for game logic
+- Each system processes specific component combinations
+- Systems communicate via events
+
+Systems to implement:
+```ruby
+Systems::
+  MovementSystem
+    - Handles entity movement
+    - Processes Transform + Movement components
+    - Emits movement events
+
+  CombatSystem
+    - Manages combat interactions
+    - Processes Combat + Transform components
+    - Handles damage calculation, death
+
+  RenderSystem
+    - Manages game display
+    - Processes Transform + Render components
+    - Handles ASCII rendering
+
+  InputSystem
+    - Processes player input
+    - Converts input to game commands
+    - Handles key bindings
+
+  CollisionSystem
+    - Detects entity collisions
+    - Manages wall/obstacle interactions
+    - Handles movement validation
+
+  LevelSystem
+    - Manages level generation
+    - Handles level transitions
+    - Controls monster spawning
+
+  CommandSystem
+    - Processes command queue
+    - Validates commands
+    - Manages command history
+    - Handles undo/redo
+```
+
+### 1.4 Event System
+Events to implement:
+```ruby
+Events::
+  MovementEvent
+  CombatEvent
+  LevelChangeEvent
+  DeathEvent
+  CollisionEvent
+  InputEvent
+  CommandExecutedEvent
+  CommandFailedEvent
+  CommandUndoneEvent
+```
+
+## 2. Feature Migration
+
+### 2.1 Command System Migration
+1. Extract command handling from current Command class
+2. Create individual command classes
+3. Implement command queue
+4. Add command validation
+5. Implement command history
+6. Add undo/redo support
+
+### 2.2 Movement System Migration
+1. Extract movement logic from Command class
+2. Create MovementComponent for movement data
+3. Implement MovementSystem for processing
+4. Add movement-related events
+
+### 2.3 Combat System Migration
+1. Extract combat logic from Command class
+2. Create CombatComponent for combat stats
+3. Implement CombatSystem for processing
+4. Add combat-related events
+
+### 2.4 Level Generation Migration
+1. Convert Level class to use ECS
+2. Create LevelSystem for generation
+3. Implement level transition events
+4. Add monster spawning system
+
+### 2.5 Command Pattern Integration
+1. Convert existing actions to commands
+2. Implement command factory
+3. Add command serialization
+4. Create command processors
+5. Add command logging
+
+## 3. New Features Implementation
+
+### 3.1 Save/Load System
+1. Implement component serialization
+2. Create save file format
+3. Add save/load commands
+4. Implement state restoration
+
+### 3.2 Enhanced Input System
+1. Create configurable key bindings
+2. Implement command queueing
+3. Add macro support
+4. Create input contexts
+
+### 3.3 Game State Management
+1. Implement state machine
+2. Create game states (Menu, Playing, Combat)
+3. Add state transitions
+4. Implement UI for each state
+
+### 3.4 Enhanced Command System
+1. Implement macro commands
+2. Add command composition
+3. Create command shortcuts
+4. Implement command replay
+
+## 4. Testing Strategy
+
+### 4.1 Unit Tests
+- Component tests
+- System tests
+- Event tests
+- State tests
+- Command pattern tests
+  - Individual command tests
+  - Command queue tests
+  - Command history tests
+  - Undo/redo tests
+
+### 4.2 Integration Tests
+- System interaction tests
+- Event chain tests
+- State transition tests
+
+### 4.3 Acceptance Tests
+- Full game scenarios
+- Save/Load tests
+- Performance tests
+
+## 5. Migration Strategy
+
+### 5.1 Phase 1: Core Infrastructure
+- Implement base classes
+- Set up event system
+- Create initial systems
+- Implement command pattern
+- Set up command queue
+- Create basic commands
+
+### 5.2 Phase 2: Feature Migration
+- Migrate one feature at a time
+- Maintain existing functionality
+- Add tests for new implementations
+
+### 5.3 Phase 3: New Features
+- Add new systems
+- Implement save/load
+- Enhance input handling
+
+### 5.4 Phase 4: Cleanup
+- Remove legacy code
+- Optimize performance
+- Complete documentation
+
+## 6. Documentation
+
+### 6.1 Code Documentation
+- System documentation
+- Component documentation
+- Event documentation
+- Architecture overview
+- Command pattern documentation
+- Command queue documentation
+- Command history documentation
+
+### 6.2 User Documentation
+- Updated controls
+- New features
+- Configuration options
+- Available commands
+- Command shortcuts
+- Undo/redo functionality
+
+## Timeline Estimate
+- Phase 1: 1-2 weeks
+- Phase 2: 2-3 weeks
+- Phase 3: 1-2 weeks
+- Phase 4: 1 week
+
+Total: 5-8 weeks for complete refactoring 

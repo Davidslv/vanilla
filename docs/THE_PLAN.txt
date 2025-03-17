@@ -1,0 +1,32 @@
+# Vanilla Roguelike Refactoring Plan
+
+## Goal
+Transform the codebase into a maintainable, flexible ECS architecture.
+
+## Main Steps
+1. Implement Core ECS Infrastructure
+   - Entity Component System
+   - Event System
+   - State Management
+   - Command Pattern Implementation
+
+2. Migrate Current Features
+   - Command Processing
+   - Movement
+   - Combat
+   - Level Generation
+   - UI/Rendering
+
+3. Add New Systems
+   - Command Queue System
+   - Input Handling
+   - Collision Detection
+   - Game State Management
+   - Save/Load
+
+## Expected Outcomes
+- Decoupled components
+- Clear system responsibilities
+- Event-driven communication
+- Command-based action handling
+- Testable code structure 

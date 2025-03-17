@@ -1,17 +1,22 @@
 require_relative 'components/base_component'
 
 module Vanilla
+  # Base class for all game entities (players, monsters, items)
   class Entity
+    attr_reader :id, :components
+
     def initialize
+      @id = SecureRandom.uuid
       @components = {}
     end
 
     def add_component(component)
-      if component.is_a?(Class)
-        component = component.new(self)
-      end
       @components[component.class] = component
-      component
+      component.entity = self
+    end
+
+    def remove_component(component_class)
+      @components.delete(component_class)
     end
 
     def get_component(component_class)

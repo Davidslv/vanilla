@@ -141,3 +141,30 @@ Notes
 - Document pattern usage for future contributors
 - Consider performance implications
 - Maintain roguelike game feel 
+
+Proposed structure:
+lib/vanilla/states/
+  - game_state.rb
+  - combat_state.rb
+  - movement_state.rb
+  - menu_state.rb 
+
+Proposed command structure:
+lib/vanilla/commands/
+  - move_command.rb
+  - attack_command.rb
+  - use_stairs_command.rb
+  - base_command.rb 
+
+Proposed event structure:
+lib/vanilla/events/
+  - event_manager.rb
+  - game_events.rb
+  - combat_events.rb 
+
+Proposed system structure:
+lib/vanilla/systems/
+  - movement_system.rb
+  - combat_system.rb
+  - collision_system.rb
+  - rendering_system.rb 
