@@ -4,6 +4,7 @@ require_relative '../components/movement_component'
 require_relative '../support/tile_type'
 require_relative '../map_utils/grid'
 require_relative '../events/event_manager'
+require_relative '../map'
 
 module Vanilla
   module Commands
@@ -48,14 +49,9 @@ module Vanilla
           puts "Player position: #{transform.position.inspect}"
           puts "Current cell tile: #{transform.current_cell.tile}"
           
-          # Create a new grid for the next level
-          old_grid = transform.grid
-          new_grid = MapUtils::Grid.new(rows: old_grid.rows, cols: old_grid.cols)
-          
-          # Initialize with floor tiles
-          new_grid.each_cell do |cell|
-            cell.tile = Support::TileType::FLOOR
-          end
+          # Create a new map for the next level
+          map = Map.new(rows: transform.grid.rows, cols: transform.grid.cols)
+          new_grid = map.grid
           
           # Find stairs in new level
           stairs_row = rand(1..new_grid.rows - 2)
@@ -69,7 +65,7 @@ module Vanilla
           
           # Emit level transition event
           emit_event(:level_transition, {
-            old_grid: old_grid,
+            old_grid: transform.grid,
             new_grid: new_grid,
             entity: entity
           })
