@@ -1,7 +1,8 @@
 module Vanilla
   class Command
     require_relative 'support/tile_type'
-    require_relative 'movement'
+    require_relative 'components/movement_component'
+    require_relative 'level'
     attr_reader :player, :terminal, :messages, :grid
 
     def initialize(player:, terminal:)
@@ -35,24 +36,96 @@ module Vanilla
     private
 
     def handle_movement(direction)
-      result = Movement.move(grid: grid, unit: player, direction: direction)
+      movement = player.get_component(Components::MovementComponent)
+      transform = player.get_component(Components::TransformComponent)
+      
+      # Get the target cell before moving
+      current_cell = grid.cell_at(transform.row, transform.column)
+      target_cell = case direction
+        when :left
+          current_cell.west
+        when :right
+          current_cell.east
+        when :up
+          current_cell.north
+        when :down
+          current_cell.south
+      end
+      
+      # Store the target cell's original tile
+      target_tile = target_cell&.tile
+      
+      # Attempt to move
+      result = movement.move(direction)
       
       if result
-        handle_cell_interaction(grid.cell_at(player.row, player.column))
         add_message("You move #{direction_name(direction)}")
+        # Check the original tile of the cell we moved to
+        if target_tile == Vanilla::Support::TileType::STAIRS
+          add_message("You found the stairs!")
+          add_message("Descending to the next level...")
+          
+          # Create new level and update references
+          @level = Level.random(player: player)
+          @grid = @level.grid
+          @terminal.grid = @grid
+          
+          # Update the player's grid reference
+          transform.update_grid(@grid)
+          
+          add_message("You find yourself in a new area!")
+        elsif target_cell.monster?
+          monster = grid.monsters.find { |m| m.row == target_cell.row && m.column == target_cell.column }
+          initiate_combat(monster) if monster
+        end
       else
         add_message("You hit a wall!")
       end
     end
 
     def handle_cell_interaction(cell)
+      # Debug: Print cell information
+      add_message("DEBUG: Cell tile is: #{cell.tile.inspect}")
+      add_message("DEBUG: Is stairs? #{cell.stairs?}")
+      
       if cell.monster?
         monster = grid.monsters.find { |m| m.row == cell.row && m.column == cell.column }
         initiate_combat(monster) if monster
       elsif cell.stairs?
-        player.found_stairs = true
+        # Immediately generate new level when player moves onto stairs
         add_message("You found the stairs!")
+        add_message("Descending to the next level...")
+        
+        # Create new level and update references
+        @level = Level.random(player: player)
+        @grid = @level.grid
+        @terminal.grid = @grid
+        
+        # Update the player's grid reference
+        movement = player.get_component(Components::MovementComponent)
+        transform = player.get_component(Components::TransformComponent)
+        transform.update_grid(@grid)
+        
+        add_message("You find yourself in a new area!")
       end
+    end
+
+    def progress_to_next_level
+      add_message("Descending to the next level...")
+      
+      # Clear the stairs tile before transitioning
+      current_cell = grid.cell_at(player.row, player.column)
+      current_cell.tile = Vanilla::Support::TileType::FLOOR
+      
+      # Create new level and update references
+      @level = Level.random(player: player)
+      @grid = @level.grid
+      @terminal.grid = @grid
+      
+      # Reset player's stairs flag
+      player.found_stairs = false
+      
+      add_message("You find yourself in a new area!")
     end
 
     def direction_name(direction)

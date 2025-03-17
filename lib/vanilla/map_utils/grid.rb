@@ -17,6 +17,7 @@ module Vanilla
         @distances = {}
 
         configure_cells
+        set_walls
       end
 
       def [](row, column)
@@ -87,6 +88,12 @@ module Vanilla
           output << "\n"
         end
         output
+      end
+
+      def set_walls
+        each_cell do |cell|
+          cell.tile = Vanilla::Support::TileType::WALL unless cell.links.any?
+        end
       end
 
       private

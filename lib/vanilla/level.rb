@@ -1,6 +1,7 @@
 module Vanilla
   class Level
     require_relative 'support/tile_type'
+    require_relative 'components/transform_component'
     attr_reader :grid, :player, :monsters, :terminal
 
     MAX_ROWS = 10
@@ -21,18 +22,28 @@ module Vanilla
       rows ||= rand(3..MAX_ROWS)
       columns ||= rand(3..MAX_COLUMNS)
       seed = rand(999_999_999_999_999)
+      
+      # Create new grid
       grid = Map.create(rows: rows, columns: columns, algorithm: Algorithms::BinaryTree, seed: seed)
       
-      # Clear player's old position if needed
-      if player.grid
-        player.grid[player.row, player.column].tile = Vanilla::Support::TileType::FLOOR
+      # Create new level instance
+      level = new(grid: grid, player: player)
+      
+      # Get the player's transform component
+      transform = player.get_component(Components::TransformComponent)
+      
+      # Update grid reference and position
+      transform.update_grid(grid)
+      
+      # Find a valid starting position (first available floor tile)
+      grid.each_cell do |cell|
+        if cell.tile == Vanilla::Support::TileType::FLOOR && !cell.content
+          transform.move_to(cell.row, cell.column)
+          break
+        end
       end
       
-      # Update player's grid reference and position
-      player.instance_variable_set(:@grid, grid)
-      player.move_to(1, 1)
-      
-      new(grid: grid, player: player)
+      level
     end
 
     def place_monsters
@@ -55,6 +66,8 @@ module Vanilla
         cell = @grid.cell_at(row, column)
         if cell.tile == Vanilla::Support::TileType::FLOOR && !cell.player?
           cell.tile = Vanilla::Support::TileType::STAIRS
+          # Debug: Print stairs placement
+          @terminal.add_message("DEBUG: Placed stairs at #{row},#{column}")
           break
         end
       end

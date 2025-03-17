@@ -1,15 +1,16 @@
-require_relative '../unit'
+require_relative '../entity'
 require_relative '../support/tile_type'
+require_relative '../components/transform_component'
+require_relative '../components/movement_component'
 
 module Vanilla
   module Characters
-    class Player < Unit
+    class Player < Entity
       attr_accessor :name, :level, :experience, :inventory, :health, :max_health, :attack, :defense
 
       def initialize(name: 'player', row:, column:, grid:)
-        super(row: row, column: column, tile: Vanilla::Support::TileType::PLAYER, grid: grid)
+        super()
         @name = name
-        
         @level = 1
         @experience = 0
         @inventory = []
@@ -19,6 +20,10 @@ module Vanilla
         @health = @max_health
         @attack = 10
         @defense = 5
+
+        # Add components
+        add_component(Components::TransformComponent.new(self, grid, row, column, Vanilla::Support::TileType::PLAYER))
+        add_component(Components::MovementComponent)
       end
 
       def gain_experience(amount)
@@ -61,6 +66,30 @@ module Vanilla
 
       def experience_to_next_level
         100
+      end
+
+      def grid
+        get_component(Components::TransformComponent)&.grid
+      end
+
+      def row
+        get_component(Components::TransformComponent)&.row
+      end
+
+      def column
+        get_component(Components::TransformComponent)&.column
+      end
+
+      def tile
+        get_component(Components::TransformComponent)&.tile
+      end
+
+      def found_stairs=(value)
+        @found_stairs = value
+      end
+
+      def found_stairs?
+        @found_stairs
       end
     end
   end

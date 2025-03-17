@@ -6,9 +6,11 @@ module Vanilla
       @components = {}
     end
 
-    def add_component(component_class, *args)
-      component = component_class.new(self, *args)
-      @components[component_class] = component
+    def add_component(component)
+      if component.is_a?(Class)
+        component = component.new(self)
+      end
+      @components[component.class] = component
       component
     end
 

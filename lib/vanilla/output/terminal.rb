@@ -1,7 +1,8 @@
 module Vanilla
   module Output
     class Terminal
-      attr_reader :grid, :player, :messages
+      attr_reader :player, :messages
+      attr_accessor :grid
 
       def initialize(grid:, player: nil, open_maze: true)
         @grid = grid
