@@ -1,4 +1,3 @@
-require 'ostruct'
 require 'bundler/setup'
 
 # Add the lib directory to the load path
@@ -34,8 +33,16 @@ RSpec.configure do |config|
   # Disable RSpec exposing methods globally on `Module` and `main`
   config.disable_monkey_patching!
 
+  # Enable expect syntax
   config.expect_with :rspec do |c|
     c.syntax = :expect
+  end
+
+  # Clear event handlers between tests
+  config.before(:each) do
+    if defined?(Vanilla::Events::EventManager)
+      Vanilla::Events::EventManager.new.clear
+    end
   end
 
   # rspec-mocks config goes here. You can use an alternate test double

@@ -9,20 +9,24 @@ module Vanilla
     #
     # @example Creating stats for a player
     #   stats = StatsComponent.new(player, health: 50, attack: 10)
-    class StatsComponent < Component
-      attr_accessor :health, :max_health, :attack, :defense, :level, :experience
+    class StatsComponent < BaseComponent
+      attr_accessor :health, :max_health, :attack, :defense, :level, :experience, :next_level_exp
 
       # Creates a new stats component
       #
       # @param entity [Entity] The entity this component belongs to
-      def initialize(entity)
-        super
+      # @param options [Hash] Stats options
+      # @option options [Integer] :level Starting level (default: 1)
+      # @option options [Integer] :experience Starting experience (default: 0)
+      def initialize(entity, options = {})
+        super(entity)
         @health = 0
         @max_health = 0
         @attack = 0
         @defense = 0
-        @level = 1
-        @experience = 0
+        @level = options[:level] || 1
+        @experience = options[:experience] || 0
+        calculate_next_level_exp
       end
 
       # Checks if the entity is still alive
@@ -45,10 +49,14 @@ module Vanilla
       # Adds experience points and handles level up if necessary
       #
       # @param amount [Integer] The amount of experience to gain
-      def gain_experience(amount)
+      # @return [Boolean] true if leveled up
+      def add_experience(amount)
         @experience += amount
-        while @experience >= experience_to_next_level
+        if @experience >= @next_level_exp
           level_up
+          true
+        else
+          false
         end
       end
 
@@ -68,7 +76,13 @@ module Vanilla
         @health = @max_health
         @attack += 2
         @defense += 1
-        @experience = 0
+        @experience -= @next_level_exp
+        calculate_next_level_exp
+      end
+
+      # Calculate experience needed for next level
+      def calculate_next_level_exp
+        @next_level_exp = @level * 100
       end
     end
   end

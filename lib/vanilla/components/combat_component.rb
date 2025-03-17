@@ -10,12 +10,26 @@ module Vanilla
     # @example Initiating combat between two entities
     #   attacker_combat = attacker.get_component(CombatComponent)
     #   attacker_combat.attack(defender)
-    class CombatComponent < Component
+    class CombatComponent < BaseComponent
+      attr_reader :attack, :defense, :health, :max_health
+
       # @return [Array<String>] List of combat messages generated during battle
       attr_reader :messages
 
-      def initialize(entity)
-        super
+      # Initialize a new CombatComponent
+      #
+      # @param entity [Entity] The entity this component belongs to
+      # @param options [Hash] Combat options
+      # @option options [Integer] :attack Attack power (default: 1)
+      # @option options [Integer] :defense Defense power (default: 1)
+      # @option options [Integer] :health Starting health (default: 10)
+      # @option options [Integer] :max_health Maximum health (default: 10)
+      def initialize(entity, options = {})
+        super(entity)
+        @attack = options[:attack] || 1
+        @defense = options[:defense] || 1
+        @max_health = options[:max_health] || 10
+        @health = options[:health] || @max_health
         @messages = []
       end
 
@@ -45,6 +59,29 @@ module Vanilla
         end
 
         true
+      end
+
+      # Take damage and return if the entity is still alive
+      #
+      # @param amount [Integer] Amount of damage to take
+      # @return [Boolean] true if still alive, false if dead
+      def take_damage(amount)
+        @health = [@health - amount, 0].max
+        @health > 0
+      end
+
+      # Heal the entity
+      #
+      # @param amount [Integer] Amount to heal
+      def heal(amount)
+        @health = [@health + amount, @max_health].min
+      end
+
+      # Check if the entity is alive
+      #
+      # @return [Boolean] true if health > 0
+      def alive?
+        @health > 0
       end
 
       private

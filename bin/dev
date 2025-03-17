@@ -1,0 +1,42 @@
+#!/usr/bin/env ruby
+
+# Development helper script for quickly verifying game state
+# Usage: ./bin/dev
+#
+# This script provides immediate feedback about:
+# - Game loading status
+# - Player position
+# - Active components
+# - Running systems
+# - Detailed error messages if something goes wrong
+
+require_relative '../lib/vanilla/debug'
+
+# Display the current game status in a formatted way
+#
+# @param status [Hash] The game status hash containing:
+#   - :player_position [Array] Current player coordinates
+#   - :components [Array] List of loaded components
+#   - :systems [Array] List of active systems
+def display_status(status)
+  puts "\n=== Game State ==="
+  puts "Player Position: #{status[:player_position]}"
+  puts "\nLoaded Components:"
+  status[:components].each { |c| puts "  - #{c}" }
+  puts "\nActive Systems:"
+  status[:systems].each { |s| puts "  - #{s}" }
+  puts "\n"
+end
+
+# Attempt to load the game and display either the status or error information
+result = Vanilla::Debug.load_game
+
+if result[:error]
+  puts "❌ Error loading game:"
+  puts "   #{result[:message]}"
+  puts "\nTrace:"
+  result[:backtrace].each { |line| puts "   #{line}" }
+else
+  puts "✅ Game loaded successfully!"
+  display_status(result[:status])
+end 

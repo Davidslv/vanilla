@@ -24,28 +24,27 @@ module Vanilla
       private
 
       def setup_event_handlers
-        world.event_manager.subscribe(:movement_completed) do |data|
-          add_message("You move to #{data[:to].join(',')}")
+        world.event_manager.on(:movement_completed) do |data|
+          add_message("You moved #{data[:direction]}")
         end
 
-        world.event_manager.subscribe(:combat_initiated) do |data|
-          add_message("You engage in combat!")
+        world.event_manager.on(:combat_initiated) do |data|
+          add_message("Combat started with #{data[:target].name}")
         end
 
-        world.event_manager.subscribe(:stairs_found) do |data|
-          add_message("You found stairs leading to another level!")
-          add_message("Descending to the next level...")
+        world.event_manager.on(:stairs_found) do |_data|
+          add_message("You found stairs!")
         end
 
-        world.event_manager.subscribe(:invalid_command) do |data|
-          add_message("Invalid command: #{data[:key]}")
+        world.event_manager.on(:invalid_command) do |data|
+          add_message("Invalid command: #{data[:reason]}")
         end
 
-        world.event_manager.subscribe(:command_failed) do |data|
-          add_message("Can't do that!")
+        world.event_manager.on(:command_failed) do |data|
+          add_message("Command failed: #{data[:reason]}")
         end
 
-        world.event_manager.subscribe(:hit_wall) do |data|
+        world.event_manager.on(:hit_wall) do |_data|
           add_message("You hit a wall!")
         end
       end

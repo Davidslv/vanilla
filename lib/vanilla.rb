@@ -2,6 +2,8 @@ require 'ostruct'
 require 'pry'
 require 'securerandom'
 
+# events
+require_relative 'vanilla/events/event_manager'
 
 # support
 require_relative 'vanilla/support/tile_type'
@@ -40,7 +42,15 @@ require_relative 'vanilla/components/stats_component'
 # commands
 require_relative 'vanilla/command'
 
+# systems
+require_relative 'vanilla/systems/input_system'
+require_relative 'vanilla/systems/message_system'
+
+# world
 require_relative 'vanilla/world'
+
+# debug tools
+require_relative 'vanilla/debug'
 
 module Vanilla
   class Error < StandardError; end
