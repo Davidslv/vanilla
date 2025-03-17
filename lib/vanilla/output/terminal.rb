@@ -25,7 +25,7 @@ module Vanilla
 
       def to_s
         # Add seed and grid information
-        output = "Seed: #{$seed} | Rows: #{grid.rows} | Columns: #{grid.columns}\n\n"
+        output = "Seed: #{$seed} | Rows: #{grid.rows} | Columns: #{grid.cols}\n\n"
 
         # Add the maze
         output << if @open_maze
@@ -59,7 +59,7 @@ module Vanilla
       end
 
       def self.draw(grid)
-        output = "+" + "---+" * grid.columns + "\n"
+        output = "+" + "---+" * grid.cols + "\n"
 
         grid.each_row do |row|
           top = "|"
@@ -89,7 +89,7 @@ module Vanilla
 
       private
         def draw_open_maze
-          output = "+" + "---+" * @grid.columns + "\n"
+          output = "+" + "---+" * @grid.cols + "\n"
 
           @grid.each_row do |row|
             top = "|"
@@ -119,7 +119,7 @@ module Vanilla
         end
 
         def draw_dead_end_maze
-          output = '#' + '####' * @grid.columns + "\n"
+          output = '#' + '####' * @grid.cols + "\n"
 
           @grid.each_row do |row|
             top = '#'
