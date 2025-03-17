@@ -1,4 +1,4 @@
-require_relative '../component'
+require_relative 'base_component'
 require_relative '../support/tile_type'
 
 module Vanilla
@@ -10,10 +10,10 @@ module Vanilla
     #
     # @example Creating a transform component for a player
     #   transform = TransformComponent.new(player, grid, 0, 0, TileType::PLAYER)
-    class TransformComponent < Component
+    class TransformComponent < BaseComponent
       include Support::TileType
 
-      attr_reader :row, :column, :grid, :tile
+      attr_reader :grid, :row, :col
 
       # Creates a new transform component
       #
@@ -22,11 +22,11 @@ module Vanilla
       # @param row [Integer] Starting row position
       # @param column [Integer] Starting column position
       # @param tile [String] The tile representation (default: FLOOR)
-      def initialize(entity, grid:, row:, column:, tile: FLOOR)
+      def initialize(entity, grid, row, col, tile: FLOOR)
         super(entity)
         @grid = grid
         @row = row
-        @column = column
+        @col = col
         @tile = tile
         place_on_grid
       end
@@ -50,7 +50,7 @@ module Vanilla
 
         clear_current_position
         @row = new_row
-        @column = new_col
+        @col = new_col
         place_on_grid
         true
       end
@@ -59,14 +59,18 @@ module Vanilla
       #
       # @return [Array<Integer>] The current [row, column] position
       def position
-        [@row, @column]
+        [@row, @col]
+      end
+
+      def current_cell
+        @grid.cell_at(@row, @col)
       end
 
       private
 
       # Places the entity on the grid at its current position
       def place_on_grid
-        target_cell = @grid.cell_at(@row, @column)
+        target_cell = @grid.cell_at(@row, @col)
         target_cell.content = entity
         target_cell.tile = @tile
       end
@@ -74,7 +78,7 @@ module Vanilla
       # Clears the entity's current position on the grid
       def clear_current_position
         return unless @grid
-        current_cell = @grid.cell_at(@row, @column)
+        current_cell = @grid.cell_at(@row, @col)
         if current_cell.content == entity
           current_cell.content = nil
           current_cell.tile = FLOOR
