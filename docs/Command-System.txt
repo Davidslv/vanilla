@@ -1,0 +1,17 @@
+Command Integration:
+    The World class acts as a container for all entities and systems
+    Commands receive the world instance in their constructor, allowing them to:
+    Access entities and their components
+    Emit events through the world's event manager
+    Modify the world state (e.g., removing defeated entities)
+
+System Integration:
+    Systems are registered with the World class
+    Each system receives the world instance in its constructor
+    The World class manages the update cycle of systems
+    
+    Systems can:
+        Query entities and their components
+        Process input and create commands
+        Handle events and generate messages
+        Modify the game state through commands
