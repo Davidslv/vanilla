@@ -6,34 +6,41 @@ module Vanilla
     attr_reader :entities, :systems, :event_manager
 
     def initialize
-      @entities = Set.new
+      @entities = []
       @systems = []
       @event_manager = Events::EventManager.new
-      @to_add = []
-      @to_remove = []
+      setup_systems
     end
 
     def add_entity(entity)
-      @to_add << entity
+      @entities << entity
     end
 
     def remove_entity(entity)
-      @to_remove << entity
+      @entities.delete(entity)
     end
 
     def add_system(system)
       @systems << system
     end
 
-    def update(delta_time)
-      # Process pending entity changes
-      @to_add.each { |entity| @entities.add(entity) }
-      @to_remove.each { |entity| @entities.delete(entity) }
-      @to_add.clear
-      @to_remove.clear
+    def update
+      @systems.each(&:update)
+    end
 
-      # Update all systems
-      @systems.each { |system| system.update(delta_time) }
+    def process_input(key)
+      input_system = @systems.find { |system| system.is_a?(Systems::InputSystem) }
+      input_system&.process_input(key)
+    end
+
+    def messages
+      message_system = @systems.find { |system| system.is_a?(Systems::MessageSystem) }
+      message_system&.messages || []
+    end
+
+    def clear_messages
+      message_system = @systems.find { |system| system.is_a?(Systems::MessageSystem) }
+      message_system&.clear_messages
     end
 
     # Find entities with all specified components
@@ -41,6 +48,13 @@ module Vanilla
       @entities.select do |entity|
         component_classes.all? { |klass| entity.has_component?(klass) }
       end
+    end
+
+    private
+
+    def setup_systems
+      add_system(Systems::InputSystem.new(self))
+      add_system(Systems::MessageSystem.new(self))
     end
   end
 end 
