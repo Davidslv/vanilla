@@ -7,10 +7,12 @@ module Vanilla
   # Base class for all game entities (players, monsters, items)
   class Entity
     attr_reader :id, :components
+    attr_accessor :world
 
     def initialize
       @id = SecureRandom.uuid
       @components = {}
+      @world = nil
     end
 
     # Adds a component to the entity
@@ -60,12 +62,23 @@ module Vanilla
       @components.each_value(&:update)
     end
 
+    # Get all components
+    #
+    # @return [Hash] A hash of all components
+    def components
+      @components
+    end
+
     private
 
     def validate_component(component)
       raise ComponentError, "Component cannot be nil" if component.nil?
       unless component.is_a?(Components::BaseComponent)
         raise ComponentError, "Component must be a BaseComponent"
+      end
+
+      if component.entity && component.entity != self
+        raise ComponentError, "Component is already attached to another entity"
       end
     end
   end

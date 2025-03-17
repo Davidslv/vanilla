@@ -2,29 +2,41 @@ require_relative '../entity'
 require_relative '../components/transform_component'
 require_relative '../components/combat_component'
 require_relative '../components/stats_component'
+require_relative '../components/movement_component'
 require_relative '../support/tile_type'
 
 module Vanilla
   module Characters
+    # Represents a player character in the game
     class Player < Entity
       include Support::TileType
 
       attr_accessor :name, :level, :experience, :inventory, :health, :max_health, :attack, :defense
 
+      # Initialize a new player
+      #
+      # @param grid [MapUtils::Grid] The game grid
+      # @param row [Integer] Starting row position
+      # @param col [Integer] Starting column position
       def initialize(grid:, row:, col:)
         super()
         
-        add_component(Components::TransformComponent.new(
-          self, grid, row, col, tile: PLAYER
-        ))
-        
-        add_component(Components::CombatComponent.new(
-          self, strength: 10
-        ))
+        # Initialize transform component
+        transform = Components::TransformComponent.new(grid, [row, col])
+        add_component(transform)
         
         add_component(Components::StatsComponent.new(
-          self, hp: 100, max_hp: 100, level: 1
+          self,
+          health: 100,
+          max_health: 100,
+          attack: 10,
+          defense: 5,
+          level: 1,
+          experience: 0
         ))
+
+        add_component(Components::MovementComponent.new(self))
+        add_component(Components::CombatComponent.new(self))
       end
 
       def transform
@@ -47,34 +59,40 @@ module Vanilla
         transform&.current_cell
       end
 
-      def gain_experience(amount)
-        @experience += amount
-        while @experience >= experience_to_next_level
-          level_up
-        end
-      end
-
-      def level_up
-        @level += 1
-        @max_health += 10
-        @health = @max_health
-        @attack += 2
-        @defense += 1
-        @experience = 0
-      end
-
-      def alive?
-        @health > 0
-      end
-
+      # Take damage and return amount taken
+      #
+      # @param amount [Integer] Amount of damage to take
+      # @return [Integer] Actual damage taken
       def take_damage(amount)
-        actual_damage = [amount - @defense, 1].max
-        @health = [@health - actual_damage, 0].max
-        actual_damage
+        stats = get_component(Components::StatsComponent)
+        stats.take_damage(amount)
       end
 
-      def attack_target(target)
-        target.take_damage(@attack)
+      # Attack a target
+      #
+      # @param target [Entity] Target to attack
+      # @return [Integer] Damage dealt
+      def attack(target)
+        combat = get_component(Components::CombatComponent)
+        return 0 unless combat
+        combat.attack(target)
+      end
+
+      # Gain experience points
+      #
+      # @param amount [Integer] Amount of experience to gain
+      # @return [Boolean] true if leveled up
+      def gain_experience(amount)
+        stats = get_component(Components::StatsComponent)
+        stats.gain_experience(amount)
+      end
+
+      # Check if player is alive
+      #
+      # @return [Boolean] true if alive
+      def alive?
+        stats = get_component(Components::StatsComponent)
+        stats.alive?
       end
 
       def add_to_inventory(item)

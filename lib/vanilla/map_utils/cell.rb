@@ -1,149 +1,112 @@
 module Vanilla
   module MapUtils
-    # Represents a single cell in a maze or grid-based map
-    # It has a position in the grid and can be linked to other cells.
-    # Cells can be linked to other cells to form a path or maze.
-    # Cells can also have various properties, such as whether they are a dead end, or contain a player or stairs.
-    #
-    # @example
-    #  cell = Vanilla::MapUtils::Cell.new(row: 0, column: 0)
-    #  cell.north = Vanilla::MapUtils::Cell.new(row: 0, column: 0)
-    #  cell.north.link(cell: cell)
-    #
-    # The `link` method is used to link this cell to another cell.
-    # The `unlink` method is used to unlink this cell from another cell.
-    # The `links` method returns an array of all cells linked to this cell.
-    # The `linked?` method checks if this cell is linked to another cell.
-    # The `neighbors` method returns an array of all neighboring cells (north, south, east, west).
-    # The `distances` method calculates the distance from the current cell to all other cells in the map.
-    # The `dead_end?` method checks if this cell is a dead end.
-    # The `player?` method checks if this cell contains the player.
-    # The `stairs?` method checks if this cell contains stairs.
-    # The `monster?` method checks if this cell contains a monster.
-    # The `occupied?` method checks if the cell is occupied.
+    # Represents a single cell in the game grid
     class Cell
-      attr_reader :row, :column
-      attr_accessor :north, :south, :east, :west, :tile, :distance, :dead_end, :content
+      attr_reader :row, :col, :tile
+      attr_accessor :content, :north, :south, :east, :west
 
-      # Initialize a new cell with its position in the grid
+      # Initialize a new cell
+      #
       # @param row [Integer] The row position of the cell
-      # @param column [Integer] The column position of the cell
-      def initialize(row:, column:)
+      # @param col [Integer] The column position of the cell
+      # @param tile [TileType] The type of tile in this cell
+      def initialize(row:, col:, tile: Support::TileType::FLOOR)
         @row = row
-        @column = column
-        @links = {}
-        @tile = Vanilla::Support::TileType::FLOOR
-        @dead_end = false
+        @col = col
+        @tile = tile
         @content = nil
+        @links = {}
+        @north = nil
+        @south = nil
+        @east = nil
+        @west = nil
+      end
+
+      # Set the tile type for this cell
+      #
+      # @param type [TileType] The new tile type
+      def tile=(type)
+        @tile = type
       end
 
       # Get the position of the cell as an array
+      #
       # @return [Array<Integer>] An array containing the row and column
       def position
-        [row, column]
+        [row, col]
+      end
+
+      # Check if this cell contains a monster
+      #
+      # @return [Boolean] true if the cell contains a monster
+      def monster?
+        @content&.is_a?(Characters::Monster)
+      end
+
+      # Check if this cell has a special tile type
+      #
+      # @return [Boolean] true if the cell has a special tile type
+      def special?
+        @tile != Support::TileType::FLOOR
+      end
+
+      # Check if the cell is walkable
+      #
+      # @return [Boolean] true if the cell can be walked on
+      def walkable?
+        @tile != Support::TileType::WALL && @content.nil?
+      end
+
+      # Convert the cell to a string representation
+      #
+      # @return [String] The string representation of the cell
+      def to_s
+        @tile.to_s
       end
 
       # Link this cell to another cell
+      #
       # @param cell [Cell] The cell to link to
-      # @param bidirectional [Boolean] Whether to create a bidirectional link
-      # @return [Cell] Returns self for method chaining
+      # @param bidirectional [Boolean] Whether to link both ways
       def link(cell:, bidirectional: true)
-        raise ArgumentError, "Cannot link a cell to itself" if cell == self
-
         @links[cell] = true
         cell.link(cell: self, bidirectional: false) if bidirectional
-        self
       end
 
       # Unlink this cell from another cell
+      #
       # @param cell [Cell] The cell to unlink from
-      # @param bidirectional [Boolean] Whether to remove the link in both directions
+      # @param bidirectional [Boolean] Whether to unlink both ways
       def unlink(cell:, bidirectional: true)
         @links.delete(cell)
         cell.unlink(cell: self, bidirectional: false) if bidirectional
-
-        self
-      end
-
-      # Get all cells linked to this cell
-      # @return [Array<Cell>] An array of linked cells
-      def links
-        @links.keys
       end
 
       # Check if this cell is linked to another cell
-      # @param cell [Cell] The cell to check for a link
-      # @return [Boolean] True if linked, false otherwise
+      #
+      # @param cell [Cell] The cell to check
+      # @return [Boolean] true if the cells are linked
       def linked?(cell)
         @links.key?(cell)
       end
 
-      # Check if this cell is a dead end
-      # @return [Boolean] True if it's a dead end, false otherwise
-      def dead_end?
-        @dead_end
+      # Get all cells linked to this cell
+      #
+      # @return [Array<Cell>] Array of linked cells
+      def links
+        @links.keys
       end
 
-      # Check if this cell contains the player
-      # @return [Boolean] True if it contains the player, false otherwise
-      def player?
-        tile == Vanilla::Support::TileType::PLAYER
-      end
-
-      # Check if this cell contains stairs
-      # @return [Boolean] True if it contains stairs, false otherwise
-      def stairs?
-        tile == Vanilla::Support::TileType::STAIRS
-      end
-
-      # Check if this cell contains a monster
-      # @return [Boolean] True if it contains a monster, false otherwise
-      def monster?
-        tile == Vanilla::Support::TileType::MONSTER
-      end
-
-      # Get all neighboring cells (north, south, east, west)
-      # @return [Array<Cell>] An array of neighboring cells
+      # Get all neighboring cells
+      #
+      # @return [Array<Cell>] Array of neighboring cells
       def neighbors
-        [north, south, east, west].compact
-      end
-
-      # Calculate distances from this cell to all other cells in the maze
-      # @return [DistanceBetweenCells] A DistanceBetweenCells object containing distances
-      def distances
-        distances = Vanilla::MapUtils::DistanceBetweenCells.new(self)
-        frontier = [self]
-
-        while frontier.any?
-          new_frontier = []
-
-          frontier.each do |cell|
-            cell.links.each do |linked|
-              next if distances[linked]
-
-              distances[linked] = distances[cell] + 1
-              new_frontier << linked
-            end
-          end
-
-          frontier = new_frontier
-        end
-
-        distances
-      end
-
-      # Check if the cell is occupied
-      # @return [Boolean] True if the cell is occupied, false otherwise
-      def occupied?
-        tile != Vanilla::Support::TileType::FLOOR || content
-      end
-
-      def walkable?
-        tile != Vanilla::Support::TileType::WALL && content.nil?
-      end
-
-      def to_s
-        Vanilla::Support::TileType.to_s(tile)
+        list = []
+        list << north if north
+        list << south if south
+        list << east if east
+        list << west if west
+        list
       end
     end
   end
