@@ -28,14 +28,38 @@ def display_status(status)
   puts "\n"
 end
 
+# Display error details from movement tests
+#
+# @param details [Array<Hash>] Array of error details
+def display_movement_errors(details)
+  puts "\n=== Movement Test Errors ==="
+  details.each do |error|
+    puts "\nDirection: #{error[:direction]}"
+    if error[:error]
+      puts "Error: #{error[:error]}"
+      puts "Backtrace:"
+      error[:backtrace].each { |line| puts "  #{line}" }
+    else
+      puts "Expected position: #{error[:expected]}"
+      puts "Actual position: #{error[:actual]}"
+      puts "From position: #{error[:from]}"
+    end
+  end
+  puts "\n"
+end
+
 # Attempt to load the game and display either the status or error information
 result = Vanilla::Debug.load_game
 
 if result[:error]
   puts "❌ Error loading game:"
   puts "   #{result[:message]}"
-  puts "\nTrace:"
-  result[:backtrace].each { |line| puts "   #{line}" }
+  if result[:details]
+    display_movement_errors(result[:details])
+  else
+    puts "\nTrace:"
+    result[:backtrace].each { |line| puts "   #{line}" }
+  end
 else
   puts "✅ Game loaded successfully!"
   display_status(result[:status])

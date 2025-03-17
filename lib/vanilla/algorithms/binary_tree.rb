@@ -6,6 +6,13 @@ module Vanilla
         # 1. For each cell, considering only north and east neighbors
         # 2. Randomly linking to one of these neighbors if available
         # This creates a maze biased towards the north and east walls
+        
+        # First, set all cells to walls
+        grid.each_cell do |cell|
+          cell.tile = Vanilla::Support::TileType::WALL
+        end
+        
+        # Then carve passages
         grid.each_cell do |cell|
           neighbors = []
           neighbors << cell.north if cell.north
@@ -20,8 +27,21 @@ module Vanilla
           end
         end
 
-        # Set walls for unlinked cells
-        grid.set_walls
+        # Ensure the starting position (1,1) is accessible
+        start_cell = grid.cell_at(1, 1)
+        start_cell.tile = Vanilla::Support::TileType::FLOOR
+        
+        # If start cell has no links, link it to a neighbor
+        if start_cell.links.empty?
+          if start_cell.east
+            start_cell.link(cell: start_cell.east)
+            start_cell.east.tile = Vanilla::Support::TileType::FLOOR
+          elsif start_cell.south
+            start_cell.link(cell: start_cell.south)
+            start_cell.south.tile = Vanilla::Support::TileType::FLOOR
+          end
+        end
+
         grid
       end
     end

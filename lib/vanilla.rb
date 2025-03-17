@@ -15,6 +15,7 @@ require_relative 'vanilla/map_utils/grid'
 # algorithms
 require_relative 'vanilla/algorithms/abstract_algorithm'
 require_relative 'vanilla/algorithms/binary_tree'
+require_relative 'vanilla/algorithms/path_first'
 
 # output
 require_relative 'vanilla/output/terminal'
