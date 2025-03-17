@@ -34,7 +34,7 @@ module Vanilla
         puts "Direction: #{@direction.inspect}"
         puts "Target position: [#{target_row}, #{target_col}]"
 
-        target_cell = transform.grid.get(target_row, target_col)
+        target_cell = transform.grid.cell_at(target_row, target_col)
         return false unless target_cell
 
         puts "Target cell tile: #{target_cell.tile}"
@@ -57,10 +57,10 @@ module Vanilla
             cell.tile = Support::TileType::FLOOR
           end
           
-          # Place stairs in a random location
-          stairs_row = rand(new_grid.rows)
-          stairs_col = rand(new_grid.cols)
-          stairs_cell = new_grid.get(stairs_row, stairs_col)
+          # Find stairs in new level
+          stairs_row = rand(1..new_grid.rows - 2)
+          stairs_col = rand(1..new_grid.cols - 2)
+          stairs_cell = new_grid.cell_at(stairs_row, stairs_col)
           stairs_cell.tile = Support::TileType::STAIRS
           
           # Update player's grid and position
