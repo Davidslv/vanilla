@@ -1,30 +1,31 @@
-require_relative '../component'
+require_relative 'base_component'
 require_relative 'transform_component'
 
 module Vanilla
   module Components
-    # Handles entity movement within the game grid.
-    # This component works in conjunction with the TransformComponent to manage
-    # entity position changes and collision detection.
-    #
-    # @example Moving an entity left
-    #   movement = entity.get_component(MovementComponent)
-    #   movement.move(:left)
-    class MovementComponent < Component
-      # Moves the entity in the specified direction
+    # Handles entity movement and position updates
+    class MovementComponent < BaseComponent
+      # Initialize a new movement component
       #
-      # @param direction [Symbol] The direction to move (:left, :right, :up, :down)
-      # @return [Boolean] true if movement was successful, false otherwise
-      def move(direction)
+      # @param entity [Entity] The entity this component belongs to
+      def initialize(entity)
+        super()
+        @entity = entity
+      end
+
+      # Move the entity in a direction
+      #
+      # @param row_delta [Integer] Row direction (-1, 0, 1)
+      # @param col_delta [Integer] Column direction (-1, 0, 1)
+      # @return [Boolean] true if movement was successful
+      def move(row_delta, col_delta)
         transform = entity.get_component(TransformComponent)
         return false unless transform
 
-        current_cell = transform.grid.cell_at(transform.row, transform.column)
-        target_cell = get_target_cell(current_cell, direction)
+        new_row = transform.row + row_delta
+        new_col = transform.col + col_delta
 
-        return false unless can_move?(current_cell, target_cell)
-
-        transform.move_to(target_cell.row, target_cell.column)
+        transform.move_to(new_row, new_col)
       end
 
       private

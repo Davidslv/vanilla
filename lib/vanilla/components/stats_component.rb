@@ -10,20 +10,25 @@ module Vanilla
     # @example Creating stats for a player
     #   stats = StatsComponent.new(player, health: 50, attack: 10)
     class StatsComponent < BaseComponent
-      attr_accessor :health, :max_health, :attack, :defense, :level, :experience, :next_level_exp
+      attr_reader :health, :max_health, :attack, :defense, :level, :experience, :next_level_exp
 
-      # Creates a new stats component
+      # Initialize a new StatsComponent
       #
       # @param entity [Entity] The entity this component belongs to
       # @param options [Hash] Stats options
+      # @option options [Integer] :health Starting health (default: 100)
+      # @option options [Integer] :max_health Maximum health (default: 100)
+      # @option options [Integer] :attack Attack power (default: 10)
+      # @option options [Integer] :defense Defense power (default: 5)
       # @option options [Integer] :level Starting level (default: 1)
       # @option options [Integer] :experience Starting experience (default: 0)
       def initialize(entity, options = {})
-        super(entity)
-        @health = 0
-        @max_health = 0
-        @attack = 0
-        @defense = 0
+        super()
+        @entity = entity
+        @max_health = options[:max_health] || 100
+        @health = options[:health] || @max_health
+        @attack = options[:attack] || 10
+        @defense = options[:defense] || 5
         @level = options[:level] || 1
         @experience = options[:experience] || 0
         calculate_next_level_exp
@@ -46,11 +51,22 @@ module Vanilla
         actual_damage
       end
 
+      # Heal the entity
+      #
+      # @param amount [Integer] Amount to heal
+      # @return [Integer] Actual amount healed
+      def heal(amount)
+        return 0 unless alive?
+        old_health = @health
+        @health = [@health + amount, @max_health].min
+        @health - old_health
+      end
+
       # Adds experience points and handles level up if necessary
       #
       # @param amount [Integer] The amount of experience to gain
       # @return [Boolean] true if leveled up
-      def add_experience(amount)
+      def gain_experience(amount)
         @experience += amount
         if @experience >= @next_level_exp
           level_up
@@ -72,12 +88,16 @@ module Vanilla
       # Handles the level up process, increasing stats
       def level_up
         @level += 1
+        @experience -= @next_level_exp
+        improve_stats
+        calculate_next_level_exp
+      end
+
+      def improve_stats
         @max_health += 10
         @health = @max_health
         @attack += 2
         @defense += 1
-        @experience -= @next_level_exp
-        calculate_next_level_exp
       end
 
       # Calculate experience needed for next level

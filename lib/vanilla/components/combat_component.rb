@@ -25,7 +25,8 @@ module Vanilla
       # @option options [Integer] :health Starting health (default: 10)
       # @option options [Integer] :max_health Maximum health (default: 10)
       def initialize(entity, options = {})
-        super(entity)
+        super()
+        @entity = entity
         @attack = options[:attack] || 1
         @defense = options[:defense] || 1
         @max_health = options[:max_health] || 10
