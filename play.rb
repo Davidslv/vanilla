@@ -13,8 +13,9 @@ begin
   grid = Vanilla::Map.create(
     rows: 10,
     columns: 10,
-    algorithm: Vanilla::Algorithms::PathFirst,
-    seed: rand(999_999_999_999_999)
+    algorithm: Vanilla::Algorithms::BinaryTree,
+    open_maze: true,
+    seed: 123456789
   )
   puts "✓ Maze generated"
 
