@@ -5,6 +5,7 @@ require_relative '../support/tile_type'
 require_relative '../map_utils/grid'
 require_relative '../events/event_manager'
 require_relative '../map'
+require_relative '../algorithms'
 
 module Vanilla
   module Commands
@@ -50,21 +51,19 @@ module Vanilla
           puts "Current cell tile: #{transform.current_cell.tile}"
           
           # Create a new map for the next level
-          map = Map.new(rows: transform.grid.rows, cols: transform.grid.cols)
-          new_grid = map.grid
+          map = Map.new(rows: transform.grid.rows, cols: transform.grid.cols, algorithm: Algorithms::BinaryTree)
+          new_grid = map.create
           
-          # Find stairs in new level
-          stairs_row = rand(1..new_grid.rows - 2)
-          stairs_col = rand(1..new_grid.cols - 2)
-          stairs_cell = new_grid.cell_at(stairs_row, stairs_col)
-          stairs_cell.tile = Support::TileType::STAIRS
+          # Ensure the starting position is a floor tile
+          start_cell = new_grid.cell_at(1, 1)
+          start_cell.tile = Support::TileType::FLOOR
           
           # Update player's grid and position
           transform.update_grid(new_grid)
           transform.move_to(1, 1) # Place player in a safe starting position
           
           # Emit level transition event
-          emit_event(:level_transition, {
+          world.event_manager.trigger(:level_transition, {
             old_grid: transform.grid,
             new_grid: new_grid,
             entity: entity
