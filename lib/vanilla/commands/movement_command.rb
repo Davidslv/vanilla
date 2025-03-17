@@ -29,13 +29,24 @@ module Vanilla
         target_row = transform.position[0] + @direction[0]
         target_col = transform.position[1] + @direction[1]
 
+        puts "\nMovementCommand debug:"
+        puts "Current position: #{transform.position.inspect}"
+        puts "Direction: #{@direction.inspect}"
+        puts "Target position: [#{target_row}, #{target_col}]"
+
         target_cell = transform.grid.get(target_row, target_col)
         return false unless target_cell
 
+        puts "Target cell tile: #{target_cell.tile}"
+
         # Check if moving to stairs
         if target_cell.tile == Support::TileType::STAIRS
+          puts "Moving to stairs..."
           # First move to the stairs position
           transform.move_to(target_row, target_col)
+          puts "After move_to:"
+          puts "Player position: #{transform.position.inspect}"
+          puts "Current cell tile: #{transform.current_cell.tile}"
           
           # Create a new grid for the next level
           old_grid = transform.grid

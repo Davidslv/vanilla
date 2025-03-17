@@ -22,8 +22,8 @@ module Vanilla
         transform = entity.get_component(TransformComponent)
         return false unless transform
 
-        new_row = transform.row + row_delta
-        new_col = transform.col + col_delta
+        new_row = transform.position[0] + row_delta
+        new_col = transform.position[1] + col_delta
 
         transform.move_to(new_row, new_col)
       end
