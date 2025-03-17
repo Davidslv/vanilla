@@ -3,8 +3,10 @@ module Vanilla
     # Base class for all systems in the game
     # Systems process entities with specific components
     class BaseSystem
-      def initialize(world)
-        @world = world
+      attr_accessor :world
+
+      def initialize
+        @world = nil
       end
 
       # Override this method to specify which components an entity needs
@@ -15,6 +17,7 @@ module Vanilla
 
       # Returns all entities that can be processed by this system
       def matching_entities
+        return [] unless @world
         @world.entities.select do |entity|
           required_components.all? { |component| entity.has_component?(component) }
         end
@@ -24,10 +27,6 @@ module Vanilla
       def update(delta_time)
         raise NotImplementedError, "#{self.class} must implement update"
       end
-
-      protected
-
-      attr_reader :world
     end
   end
 end 

@@ -3,65 +3,51 @@ require_relative '../commands/movement_command'
 
 module Vanilla
   module Systems
+    # System that handles keyboard input and converts it to game commands
     class InputSystem < BaseSystem
-      def initialize(world)
-        super
-        @command_queue = []
+      MOVEMENT_KEYS = {
+        'h' => [0, -1],  # left
+        'l' => [0, 1],   # right
+        'k' => [-1, 0],  # up
+        'j' => [1, 0],   # down
+      }.freeze
+
+      # Initialize the input system
+      #
+      # @param world [World] The game world
+      # @param player [Entity] The player entity
+      def initialize(world, player)
+        super()
+        @world = world
+        @player = player
       end
 
-      def process_input(key)
-        command = create_command(key)
-        @command_queue << command if command
-      end
+      # Process keyboard input and create appropriate commands
+      #
+      # @param input [String] The keyboard input
+      # @return [BaseCommand, nil] The command to execute, or nil if input is invalid
+      def update(input)
+        return nil unless input && input.length == 1
 
-      def update(delta_time)
-        while command = @command_queue.shift
-          result = command.execute
-          handle_command_result(command, result)
+        command = create_command(input)
+        if command
+          command.execute
         end
       end
 
       private
 
       def create_command(key)
-        player = find_player
-        return unless player
-
-        case key
-        when 'h'
-          Commands::MovementCommand.new(world: world, entity: player, direction: :left)
-        when 'j'
-          Commands::MovementCommand.new(world: world, entity: player, direction: :down)
-        when 'k'
-          Commands::MovementCommand.new(world: world, entity: player, direction: :up)
-        when 'l'
-          Commands::MovementCommand.new(world: world, entity: player, direction: :right)
-        when "\C-c", "q"
-          emit_event(:quit_game)
+        if MOVEMENT_KEYS.key?(key)
+          return nil unless @player
+          Commands::MovementCommand.new(@world, @player, MOVEMENT_KEYS[key])
+        elsif key == 'q'
+          Events::EventManager.emit(:quit_game)
           nil
         else
-          emit_event(:invalid_command, key: key)
+          Events::EventManager.emit(:invalid_command, key: key)
           nil
         end
-      end
-
-      def handle_command_result(command, result)
-        return unless command
-
-        if result
-          emit_event(:command_succeeded, command: command.class.name)
-        else
-          emit_event(:command_failed, command: command.class.name)
-        end
-      end
-
-      def find_player
-        # In a real implementation, you'd want to cache this
-        world.entities_with_components(Components::TransformComponent).first
-      end
-
-      def emit_event(type, data = {})
-        world.event_manager.trigger(type, data)
       end
     end
   end
