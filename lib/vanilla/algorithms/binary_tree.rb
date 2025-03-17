@@ -29,16 +29,18 @@ module Vanilla
 
         # Ensure the starting position (1,1) is accessible
         start_cell = grid.cell_at(1, 1)
-        start_cell.tile = Vanilla::Support::TileType::FLOOR
-        
-        # If start cell has no links, link it to a neighbor
-        if start_cell.links.empty?
-          if start_cell.east
-            start_cell.link(cell: start_cell.east)
-            start_cell.east.tile = Vanilla::Support::TileType::FLOOR
-          elsif start_cell.south
-            start_cell.link(cell: start_cell.south)
-            start_cell.south.tile = Vanilla::Support::TileType::FLOOR
+        if start_cell
+          start_cell.tile = Vanilla::Support::TileType::FLOOR
+          
+          # If start cell has no links, link it to a neighbor
+          if start_cell.links.empty?
+            if start_cell.east
+              start_cell.link(cell: start_cell.east)
+              start_cell.east.tile = Vanilla::Support::TileType::FLOOR
+            elsif start_cell.south
+              start_cell.link(cell: start_cell.south)
+              start_cell.south.tile = Vanilla::Support::TileType::FLOOR
+            end
           end
         end
 
