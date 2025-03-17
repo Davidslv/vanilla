@@ -1,35 +1,56 @@
+require_relative 'map_utils/grid'
+require_relative 'algorithms'
+
 module Vanilla
+  # Represents a game map with a grid of cells
   class Map
-    def initialize(rows: 10, cols: 10, algorithm:, seed: nil)
-      $seed = seed || rand(999_999_999_999_999)
-      srand($seed)
-
-      @rows, @cols, @algorithm = rows, cols, algorithm
-    end
-
-    def self.create(rows:, cols:, algorithm: Vanilla::Algorithms::BinaryTree, seed:)
+    # Create a new map with the given parameters
+    #
+    # @param rows [Integer] The number of rows in the map
+    # @param cols [Integer] The number of columns in the map
+    # @param algorithm [Class] The algorithm class to use for maze generation
+    # @param seed [Integer] The random seed for maze generation
+    # @return [Grid] The generated grid
+    def self.create(rows:, cols:, algorithm: Algorithms::BinaryTree, seed:)
       new(rows: rows, cols: cols, algorithm: algorithm, seed: seed).create
     end
 
-    def create
-      grid = Vanilla::MapUtils::Grid.new(rows: @rows, cols: @cols)
+    # Initialize a new map
+    #
+    # @param rows [Integer] The number of rows in the map
+    # @param cols [Integer] The number of columns in the map
+    # @param algorithm [Class] The algorithm class to use for maze generation
+    # @param seed [Integer] The random seed for maze generation
+    def initialize(rows:, cols:, algorithm:, seed:)
+      @rows = rows
+      @cols = cols
+      @algorithm = algorithm
+      @seed = seed
+      srand(@seed)
       
-      # Initialize all cells as walls
-      grid.each_cell do |cell|
-        cell.tile = Support::TileType::WALL
-      end
-      
-      # Apply maze algorithm
-      @algorithm.on(grid)
-      
-      # Ensure starting position is floor
-      starting_cell = grid.cell_at(1, 1)
-      starting_cell.tile = Support::TileType::FLOOR
-      
-      # Place stairs in a random floor tile
-      place_stairs(grid)
+      @debug_log = File.open('debug.log', 'a')
+      @debug_log.puts "\n=== Map Initialization ==="
+      @debug_log.puts "Time: #{Time.now}"
+      @debug_log.puts "Dimensions: #{rows}x#{cols}"
+      @debug_log.puts "Algorithm: #{algorithm}"
+      @debug_log.puts "Seed: #{seed}"
+      @debug_log.close
+    end
 
-      grid
+    # Create a new maze using the specified algorithm
+    #
+    # @return [Grid] The generated grid
+    def create
+      @debug_log = File.open('debug.log', 'a')
+      @debug_log.puts "\n=== Map Creation Started ==="
+      @debug_log.puts "Time: #{Time.now}"
+      @debug_log.puts "Creating new grid..."
+      @debug_log.puts "Grid created with dimensions: #{@rows}x#{@cols}"
+      @debug_log.puts "Generating maze using #{@algorithm}..."
+      @debug_log.puts "Maze generation completed"
+      @debug_log.puts "\nInitial grid state:"
+      @debug_log.puts "Map creation completed"
+      @debug_log.close
     end
 
     private
@@ -40,12 +61,16 @@ module Vanilla
       grid.each_cell do |cell|
         floor_tiles << cell if cell.tile == Support::TileType::FLOOR
       end
-
-      # Place stairs on a random floor tile away from starting position
-      valid_tiles = floor_tiles.reject { |cell| cell.row == 1 && cell.col == 1 }
-      if valid_tiles.any?
-        stairs_cell = valid_tiles.sample
+      
+      @debug_log.puts "Found #{floor_tiles.size} floor tiles"
+      
+      # Choose a random floor tile for the stairs
+      if floor_tiles.any?
+        stairs_cell = floor_tiles.sample
         stairs_cell.tile = Support::TileType::STAIRS
+        @debug_log.puts "Stairs placed at [#{stairs_cell.row}, #{stairs_cell.col}]"
+      else
+        @debug_log.puts "ERROR: No floor tiles found for stairs placement!"
       end
     end
   end
