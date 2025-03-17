@@ -1,6 +1,7 @@
 require 'ostruct'
-require 'chunky_png'
 require 'pry'
+require 'securerandom'
+
 
 # support
 require_relative 'vanilla/support/tile_type'
@@ -39,6 +40,8 @@ require_relative 'vanilla/components/stats_component'
 # commands
 require_relative 'vanilla/command'
 
+require_relative 'vanilla/world'
+
 module Vanilla
   class Error < StandardError; end
 
@@ -62,45 +65,22 @@ module Vanilla
   $seed = nil
 
   def self.run
-    # Create initial grid with minimum dimensions from Level class
-    initial_grid = Map.create(
-      rows: Level::MIN_ROWS,
-      columns: Level::MIN_COLUMNS,
-      algorithm: Algorithms::BinaryTree,
-      seed: rand(999_999_999_999_999)
-    )
-
-    # Create the player with the initial grid
-    current_player = Characters::Player.new(
+    world = World.new
+    grid = MapUtils::Grid.new(rows: 3, columns: 3)
+    
+    # Create and add player
+    player = Characters::Player.new(
+      grid: grid,
       row: 1,
-      column: 1,
-      grid: initial_grid,
-      name: 'Hero'
+      col: 1
     )
+    world.add_entity(player)
 
-    # Create the first level
-    level = Level.new(grid: initial_grid, player: current_player)
-
+    # Game loop
     loop do
-      level.terminal.clear
-      level.update
-
-      key = STDIN.getch
-      Command.process(key: key, grid: level.grid, player: current_player, terminal: level.terminal)
-
-      if current_player.found_stairs?
-        # Create a new level with increased size for progression
-        rows = [level.grid.rows + rand(2..4), Level::MAX_ROWS].min
-        columns = [level.grid.columns + rand(2..4), Level::MAX_COLUMNS].min
-        
-        level = Level.random(
-          player: current_player,
-          rows: rows,
-          columns: columns
-        )
-        
-        current_player.found_stairs = false
-      end
+      world.update
+      display_game(world)
+      handle_input(world)
     end
   end
 
@@ -147,5 +127,15 @@ module Vanilla
     grid.distances = distances.path_to(goal)
 
     grid
+  end
+
+  private
+
+  def self.display_game(world)
+    # Display implementation
+  end
+
+  def self.handle_input(world)
+    # Input handling implementation
   end
 end
