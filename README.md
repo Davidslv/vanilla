@@ -1,3 +1,21 @@
+# ⚠️ Repository Deprecation Notice
+
+This repository has been deprecated as of October 13, 2025.
+
+I appreciate your interest in this project! However, development has shifted to a new, [evolved version](https://github.com/Davidslv/vanilla-roguelike) to better align with modern game development practices. 
+The original codebase here will no longer receive any form of updates. 
+I recommend transitioning to the new repository for the latest improvements, and hopefully, community collaboration.
+
+## Introducing the New Repository: Vanilla Roguelike
+
+I've launched [Vanilla Roguelike](https://github.com/Davidslv/vanilla-roguelike) as the successor to this project. This new iteration features:
+
+A redesigned architecture based on Entity-Component-System (ECS), inspired by [Game Programming Patterns](https://gameprogrammingpatterns.com/contents.html) , making it more modular, scalable, and easier to extend.
+
+While the new repository is still a work in progress, I'm opening it up to the public to foster collaboration. 
+Your contributions — whether code, ideas, bug reports, or documentation—will help accelerate its development and shape the future of the game.
+
+
 # Vanilla Roguelike
 
 This is a work in progress [roguelike game](https://en.wikipedia.org/wiki/Roguelike) written in Ruby, it is inspired by the original 1980's [rogue game](https://en.wikipedia.org/wiki/Rogue_(video_game)).
